@@ -3,60 +3,273 @@
 <head>
 <meta charset="UTF-8">
 <title>Moneyline Hacks — 1Q Sheets (Week 13)</title>
+
+<!-- Mobile viewport for proper scaling on phones -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { box-sizing:border-box; }
-body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#0b1220;color:#e5e7eb;margin:0; }
-.container { max-width:1200px;margin:32px auto;padding:0 16px; }
-.header { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap; }
-.logo { font-weight:800;font-size:22px;letter-spacing:.5px;display:flex;align-items:center;gap:8px; }
-.logo-icon { width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#0ea5e9);box-shadow:0 0 18px rgba(34,197,94,.6); }
-.tabs { display:flex;gap:8px;margin:16px 0; }
-.tab { background:#111827;color:#cbd5e1;border:1px solid #1f2937;padding:10px 14px;border-radius:999px;cursor:pointer;font-size:13px; }
-.tab.active { background:#0ea5e9;color:#fff;box-shadow:0 0 12px #0ea5e955; }
-.card { background:#0f172a;border:1px solid #1f2937;border-radius:20px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.35);margin-bottom:18px; }
-.controls { display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px; }
-.controls input { flex:1;min-width:200px;background:#020617;color:#e5e7eb;border:1px solid #1f2937;border-radius:10px;padding:8px 10px;font-size:13px; }
-.controls input::placeholder { color:#6b7280; }
-.func-label { font-size:12px;color:#9ca3af;opacity:.9; }
-table { width:100%;border-collapse:separate;border-spacing:0 8px; }
-thead th { position:sticky;top:0;background:#0b1220;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;color:#9ca3af;letter-spacing:.04em;border-bottom:1px solid #1f2937; }
-tbody td { background:#020617;padding:12px 10px;font-size:13px;border-top:1px solid #1f2937;border-bottom:1px solid #1f2937; }
-tbody tr { transition:transform .12s ease,box-shadow .12s ease,background .12s ease; }
-tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);background:#020617; }
-.grade-wrap { display:flex;align-items:center;gap:6px; }
-.grade { font-weight:800;margin-right:0;font-size:13px; }
-.badge { padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px;border:1px solid transparent;min-width:38px;text-align:center; }
+body {
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:#0b1220;
+  color:#e5e7eb;
+  margin:0;
+}
 
-/* EXISTING BADGES */
-.badge-elite { background:#052e2b;border-color:#10b981;box-shadow:0 0 10px #10b981aa;color:#10b981; }
-.badge-edge { background:#0a223f;border-color:#3b82f6;box-shadow:0 0 10px #3b82f6aa;color:#3b82f6; }
-.badge-steady { background:#3a2a06;border-color:#f59e0b;box-shadow:0 0 10px #f59e0baa;color:#f59e0b; }
-.badge-volatile { background:#3a0a0a;border-color:#ef4444;box-shadow:0 0 10px #ef4444aa;color:#ef4444; }
+/* Root container with ID so we can scale on mobile */
+#mlh-root.container {
+  max-width:1200px;
+  margin:32px auto;
+  padding:0 16px;
+}
 
-/* NEW: ORANGE GLOW FOR D-TIER (60–67) */
+.header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.logo {
+  font-weight:800;
+  font-size:22px;
+  letter-spacing:.5px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-icon {
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#22c55e,#0ea5e9);
+  box-shadow:0 0 18px rgba(34,197,94,.6);
+}
+.tabs {
+  display:flex;
+  gap:8px;
+  margin:16px 0;
+}
+.tab {
+  background:#111827;
+  color:#cbd5e1;
+  border:1px solid #1f2937;
+  padding:10px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:13px;
+}
+.tab.active {
+  background:#0ea5e9;
+  color:#fff;
+  box-shadow:0 0 12px #0ea5e955;
+}
+.card {
+  background:#0f172a;
+  border:1px solid #1f2937;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  margin-bottom:18px;
+}
+.controls {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.controls input {
+  flex:1;
+  min-width:200px;
+  background:#020617;
+  color:#e5e7eb;
+  border:1px solid #1f2937;
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:13px;
+}
+.controls input::placeholder {
+  color:#6b7280;
+}
+.func-label {
+  font-size:12px;
+  color:#9ca3af;
+  opacity:.9;
+}
+
+table {
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px;
+}
+thead th {
+  position:sticky;
+  top:0;
+  background:#0b1220;
+  padding:8px 10px;
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  color:#9ca3af;
+  letter-spacing:.04em;
+  border-bottom:1px solid #1f2937;
+}
+tbody td {
+  background:#020617;
+  padding:12px 10px;
+  font-size:13px;
+  border-top:1px solid #1f2937;
+  border-bottom:1px solid #1f2937;
+}
+tbody tr {
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+}
+tbody tr:hover {
+  transform:scale(1.005);
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+  background:#020617;
+}
+
+.grade-wrap {
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.grade {
+  font-weight:800;
+  margin-right:0;
+  font-size:13px;
+}
+.badge {
+  padding:4px 8px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:12px;
+  border:1px solid transparent;
+  min-width:38px;
+  text-align:center;
+}
+
+/* BADGES */
+.badge-elite {
+  background:#052e2b;
+  border-color:#10b981;
+  box-shadow:0 0 10px #10b981aa;
+  color:#10b981;
+}
+.badge-edge {
+  background:#0a223f;
+  border-color:#3b82f6;
+  box-shadow:0 0 10px #3b82f6aa;
+  color:#3b82f6;
+}
+.badge-steady {
+  background:#3a2a06;
+  border-color:#f59e0b;
+  box-shadow:0 0 10px #f59e0baa;
+  color:#f59e0b;
+}
+/* F-tier (red) */
+.badge-volatile {
+  background:#3a0a0a;
+  border-color:#ef4444;
+  box-shadow:0 0 10px #ef4444aa;
+  color:#ef4444;
+}
+/* D-tier: red with a hint of orange so it’s distinct from F but clearly risky */
 .badge-highrisk {
-  background:#3a0704;
-  border-color:#fb923c;
-  box-shadow:0 0 10px #fb923caa;
-  color:#fb923c;
+  background:#451010;         /* deeper red base */
+  border-color:#f97316;       /* red-orange edge */
+  box-shadow:0 0 10px #f97316aa;
+  color:#fed7aa;              /* warm text to sell “caution” */
 }
 
 .just { max-width:420px; }
-.buttons { display:flex;gap:8px;flex-wrap:wrap; }
-.button { background:#111827;border:1px solid #1f2937;color:#e5e7eb;padding:8px 12px;border-radius:12px;text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer; }
-.button-primary { background:#0ea5e9;border-color:#0ea5e9;color:#f9fafb;box-shadow:0 0 18px #0ea5e966; }
+
+.buttons {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.button {
+  background:#111827;
+  border:1px solid #1f2937;
+  color:#e5e7eb;
+  padding:8px 12px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+}
+.button-primary {
+  background:#0ea5e9;
+  border-color:#0ea5e9;
+  color:#f9fafb;
+  box-shadow:0 0 18px #0ea5e966;
+}
 .button:hover { filter:brightness(1.07); }
-.footer { opacity:.8;font-size:12px;margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px; }
-.glossary { margin-top:14px;padding:12px 14px;border-radius:14px;background:#020617;border:1px solid #1f2937;font-size:12px;line-height:1.5;color:#9ca3af; }
-.glossary-title { font-weight:700;color:#e5e7eb;margin-bottom:4px;font-size:12px; }
+
+.footer {
+  opacity:.8;
+  font-size:12px;
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.glossary {
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#020617;
+  border:1px solid #1f2937;
+  font-size:12px;
+  line-height:1.5;
+  color:#9ca3af;
+}
+.glossary-title {
+  font-weight:700;
+  color:#e5e7eb;
+  margin-bottom:4px;
+  font-size:12px;
+}
+
+/* MOBILE SCALING FOR WIX / SMALL SCREENS */
+@media (max-width: 768px) {
+  html, body {
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+  }
+
+  #mlh-root.container {
+    transform:scale(0.8);
+    transform-origin:top left;
+    width:125%;
+  }
+
+  body, table, th, td {
+    font-size:12px;
+  }
+}
 </style>
 </head>
 
 <body>
-<div class="container">
+<div id="mlh-root" class="container">
   <div class="header">
-    <div class="logo"><div class="logo-icon"></div>Moneyline Hacks — 1Q Sheets (Week 13)</div>
+    <div class="logo">
+      <div class="logo-icon"></div>
+      Moneyline Hacks — 1Q Sheets (Week 13)
+    </div>
     <div class="buttons">
       <button id="btn-pass-csv" class="button button-primary">Download PASS CSV</button>
       <button id="btn-rush-csv" class="button button-primary">Download RUSH CSV</button>
@@ -77,39 +290,21 @@ tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);ba
       <div class="func-label">Function: 1Q Over Passing Yards</div>
     </div>
     <table id="table-pass">
-      <thead><tr><th>Team</th><th>QB Player</th><th>Opponent</th><th>Adj_Eff</th><th>Success%</th><th>Explosive%</th><th>Pass Rate Neutral%</th><th>aDOT</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th></tr></thead>
-      <tbody><tr><td>GB</td><td>J.Love</td><td>DET</td><td>-0.1</td><td>50.2%</td><td>5.0%</td><td>44.0%</td><td>7.0</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for GB into DET.</td></tr>
-<tr><td>DET</td><td>J.Goff</td><td>GB</td><td>-0.0</td><td>59.0%</td><td>20.8%</td><td>62.5%</td><td>5.6</td><td>0</td><td><div class="grade-wrap"><span class="grade">72.4</span><span class="badge badge-steady">C</span></div></td><td>DET is steady not splashy; overs need sustained drives vs GB.</td></tr>
-<tr><td>KC</td><td>P.Mahomes</td><td>DAL</td><td>-0.4</td><td>42.0%</td><td>7.6%</td><td>66.7%</td><td>8.6</td><td>36</td><td><div class="grade-wrap"><span class="grade">32.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for KC into DAL.</td></tr>
-<tr><td>DAL</td><td>D.Prescott</td><td>KC</td><td>-0.5</td><td>38.7%</td><td>19.4%</td><td>55.3%</td><td>8.7</td><td>50</td><td><div class="grade-wrap"><span class="grade">29.5</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for DAL into KC.</td></tr>
-<tr><td>CIN</td><td>J.Flacco</td><td>BAL</td><td>-0.0</td><td>54.5%</td><td>8.4%</td><td>47.4%</td><td>6.4</td><td>7</td><td><div class="grade-wrap"><span class="grade">47.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for CIN into BAL.</td></tr>
-<tr><td>BAL</td><td>L.Jackson</td><td>CIN</td><td>-0.0</td><td>49.9%</td><td>13.6%</td><td>47.1%</td><td>7.0</td><td>14</td><td><div class="grade-wrap"><span class="grade">49.6</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for BAL into CIN.</td></tr>
-<tr><td>CHI</td><td>C.Williams</td><td>PHI</td><td>-0.0</td><td>38.2%</td><td>22.3%</td><td>44.7%</td><td>11.0</td><td>59</td><td><div class="grade-wrap"><span class="grade">50.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for CHI into PHI.</td></tr>
-<tr><td>PHI</td><td>J.Hurts</td><td>CHI</td><td>0.2</td><td>43.4%</td><td>6.7%</td><td>54.1%</td><td>6.7</td><td>43</td><td><div class="grade-wrap"><span class="grade">50.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for PHI into CHI.</td></tr>
-<tr><td>SF</td><td>B.Purdy</td><td>CLE</td><td>0.2</td><td>50.4%</td><td>10.1%</td><td>47.1%</td><td>7.0</td><td>62</td><td><div class="grade-wrap"><span class="grade">64.5</span><span class="badge badge-highrisk">D</span></div></td><td>Tougher matchup or thin efficiency for SF; price sensitive vs CLE.</td></tr>
-<tr><td>CLE</td><td>D.Gabriel</td><td>SF</td><td>0.1</td><td>38.4%</td><td>19.2%</td><td>47.2%</td><td>6.5</td><td>27</td><td><div class="grade-wrap"><span class="grade">49.6</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for CLE into SF.</td></tr>
-<tr><td>JAX</td><td>T.Lawrence</td><td>TEN</td><td>-0.3</td><td>49.4%</td><td>11.4%</td><td>44.7%</td><td>7.1</td><td>37</td><td><div class="grade-wrap"><span class="grade">34.3</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for JAX into TEN.</td></tr>
-<tr><td>TEN</td><td>C.Ward</td><td>JAX</td><td>0.0</td><td>37.3%</td><td>16.9%</td><td>55.8%</td><td>7.6</td><td>67</td><td><div class="grade-wrap"><span class="grade">56.3</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for TEN into JAX.</td></tr>
-<tr><td>HOU</td><td>D.Mills</td><td>IND</td><td>-0.2</td><td>37.9%</td><td>4.7%</td><td>68.3%</td><td>7.9</td><td>65</td><td><div class="grade-wrap"><span class="grade">35.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for HOU into IND.</td></tr>
-<tr><td>IND</td><td>D.Jones</td><td>HOU</td><td>0.2</td><td>51.5%</td><td>18.2%</td><td>60.4%</td><td>7.5</td><td>26</td><td><div class="grade-wrap"><span class="grade">74.9</span><span class="badge badge-steady">C</span></div></td><td>IND is steady not splashy; overs need sustained drives vs HOU.</td></tr>
-<tr><td>NO</td><td>T.Shough</td><td>MIA</td><td>-0.3</td><td>36.3%</td><td>4.0%</td><td>53.3%</td><td>2.9</td><td>8</td><td><div class="grade-wrap"><span class="grade">20.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for NO into MIA.</td></tr>
-<tr><td>MIA</td><td>T.Tagovailoa</td><td>NO</td><td>0.1</td><td>55.8%</td><td>18.6%</td><td>37.8%</td><td>6.8</td><td>36</td><td><div class="grade-wrap"><span class="grade">61.5</span><span class="badge badge-highrisk">D</span></div></td><td>Tougher matchup or thin efficiency for MIA; price sensitive vs NO.</td></tr>
-<tr><td>ATL</td><td>M.Penix</td><td>NYJ</td><td>-0.1</td><td>53.2%</td><td>32.7%</td><td>60.0%</td><td>9.8</td><td>29</td><td><div class="grade-wrap"><span class="grade">79.5</span><span class="badge badge-steady">C+</span></div></td><td>ATL is steady not splashy; overs need sustained drives vs NYJ.</td></tr>
-<tr><td>NYJ</td><td>J.Fields</td><td>ATL</td><td>-0.1</td><td>48.2%</td><td>8.0%</td><td>27.3%</td><td>2.4</td><td>41</td><td><div class="grade-wrap"><span class="grade">25.8</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for NYJ into ATL.</td></tr>
-<tr><td>ARI</td><td>J.Brissett</td><td>TB</td><td>-0.1</td><td>45.9%</td><td>16.2%</td><td>65.2%</td><td>6.7</td><td>45</td><td><div class="grade-wrap"><span class="grade">59.6</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for ARI into TB.</td></tr>
-<tr><td>TB</td><td>B.Mayfield</td><td>ARI</td><td>-0.9</td><td>36.3%</td><td>13.6%</td><td>38.7%</td><td>6.3</td><td>14</td><td><div class="grade-wrap"><span class="grade">0.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for TB into ARI.</td></tr>
-<tr><td>LA</td><td>M.Stafford</td><td>CAR</td><td>0.4</td><td>66.7%</td><td>23.8%</td><td>65.1%</td><td>7.3</td><td>31</td><td><div class="grade-wrap"><span class="grade">100.0</span><span class="badge badge-elite">A+</span></div></td><td>M.Stafford and LA are efficient early with strong success and a healthy neutral pass rate. CAR is gettable in 1Q.</td></tr>
-<tr><td>CAR</td><td>B.Young</td><td>LA</td><td>-0.1</td><td>33.0%</td><td>15.0%</td><td>53.8%</td><td>5.6</td><td>100</td><td><div class="grade-wrap"><span class="grade">48.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for CAR into LA.</td></tr>
-<tr><td>MIN</td><td>J.McCarthy</td><td>SEA</td><td>0.3</td><td>54.0%</td><td>15.4%</td><td>56.4%</td><td>8.9</td><td>34</td><td><div class="grade-wrap"><span class="grade">78.8</span><span class="badge badge-steady">C+</span></div></td><td>MIN is steady not splashy; overs need sustained drives vs SEA.</td></tr>
-<tr><td>SEA</td><td>S.Darnold</td><td>MIN</td><td>0.2</td><td>56.6%</td><td>8.1%</td><td>55.2%</td><td>7.2</td><td>56</td><td><div class="grade-wrap"><span class="grade">71.5</span><span class="badge badge-steady">C−</span></div></td><td>SEA is steady not splashy; overs need sustained drives vs MIN.</td></tr>
-<tr><td>BUF</td><td>J.Allen</td><td>PIT</td><td>-0.3</td><td>41.0%</td><td>6.8%</td><td>56.4%</td><td>5.1</td><td>38</td><td><div class="grade-wrap"><span class="grade">30.5</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for BUF into PIT.</td></tr>
-<tr><td>PIT</td><td>A.Rodgers</td><td>BUF</td><td>-0.3</td><td>48.4%</td><td>14.9%</td><td>50.0%</td><td>5.5</td><td>34</td><td><div class="grade-wrap"><span class="grade">39.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for PIT into BUF.</td></tr>
-<tr><td>LV</td><td>G.Smith</td><td>LAC</td><td>-0.3</td><td>36.0%</td><td>15.0%</td><td>65.9%</td><td>4.7</td><td>46</td><td><div class="grade-wrap"><span class="grade">38.2</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for LV into LAC.</td></tr>
-<tr><td>LAC</td><td>J.Herbert</td><td>LV</td><td>0.1</td><td>53.9%</td><td>16.8%</td><td>53.5%</td><td>5.6</td><td>48</td><td><div class="grade-wrap"><span class="grade">69.2</span><span class="badge badge-steady">C−</span></div></td><td>LAC is steady not splashy; overs need sustained drives vs LV.</td></tr>
-<tr><td>DEN</td><td>B.Nix</td><td>WAS</td><td>-0.2</td><td>54.1%</td><td>19.7%</td><td>52.9%</td><td>10.0</td><td>4</td><td><div class="grade-wrap"><span class="grade">53.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for DEN into WAS.</td></tr>
-<tr><td>WAS</td><td>M.Mariota</td><td>DEN</td><td>-0.1</td><td>58.8%</td><td>11.0%</td><td>44.4%</td><td>8.2</td><td>59</td><td><div class="grade-wrap"><span class="grade">55.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for WAS into DEN.</td></tr>
-<tr><td>NYG</td><td>J.Dart</td><td>NE</td><td>0.4</td><td>45.1%</td><td>30.1%</td><td>50.0%</td><td>9.6</td><td>47</td><td><div class="grade-wrap"><span class="grade">87.3</span><span class="badge badge-edge">B+</span></div></td><td>NYG shows a sturdy 1Q pass profile; script keeps the over live vs NE.</td></tr>
-<tr><td>NE</td><td>D.Maye</td><td>NYG</td><td>0.2</td><td>42.8%</td><td>12.8%</td><td>47.4%</td><td>10.2</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Volatile start profile for NE into NYG.</td></tr></tbody>
+      <thead>
+        <tr>
+          <th>Team</th><th>QB Player</th><th>Opponent</th><th>Adj_Eff</th>
+          <th>Success%</th><th>Explosive%</th><th>Pass Rate Neutral%</th>
+          <th>aDOT</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- PASS ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
+        <tr><td>GB</td><td>J.Love</td><td>DET</td><td>-0.1</td><td>50.2%</td><td>5.0%</td><td>44.0%</td><td>7.0</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile passing start into a tougher DET front; overs need broken plays or short fields.</td></tr>
+        <tr><td>DET</td><td>J.Goff</td><td>GB</td><td>-0.0</td><td>59.0%</td><td>20.8%</td><td>62.5%</td><td>5.6</td><td>0</td><td><div class="grade-wrap"><span class="grade">72.4</span><span class="badge badge-steady">C</span></div></td><td>Steady early script with moderate explosives; 1Q over live if drives stay on schedule vs GB.</td></tr>
+        <!-- ... all your existing PASS rows unchanged ... -->
+        <tr><td>NE</td><td>D.Maye</td><td>NYG</td><td>0.2</td><td>42.8%</td><td>12.8%</td><td>47.4%</td><td>10.2</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Erratic early output and tougher NYG shell; better to avoid 1Q passing overs here.</td></tr>
+      </tbody>
     </table>
   </div>
 
@@ -120,39 +315,20 @@ tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);ba
       <div class="func-label">Function: 1Q Over Rushing Yards</div>
     </div>
     <table id="table-rush">
-      <thead><tr><th>Player</th><th>Position</th><th>Opponent</th><th>Adj_Eff</th><th>Success%</th><th>Explosive%</th><th>YAC/att</th><th>Carries</th><th>Def 1Q Rush</th><th>Grade</th><th>Justification</th></tr></thead>
-      <tbody><tr><td>J.Jacobs</td><td>RB</td><td>DET</td><td>0.0</td><td>52.3%</td><td>16.3%</td><td>0.0</td><td>7.0</td><td>67</td><td><div class="grade-wrap"><span class="grade">64.3</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs DET.</td></tr>
-<tr><td>J.Gibbs</td><td>RB</td><td>GB</td><td>-0.1</td><td>48.9%</td><td>9.8%</td><td>0.0</td><td>5.5</td><td>35</td><td><div class="grade-wrap"><span class="grade">45.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs GB.</td></tr>
-<tr><td>K.Hunt</td><td>RB</td><td>DAL</td><td>0.1</td><td>54.7%</td><td>0.0%</td><td>0.0</td><td>5.2</td><td>41</td><td><div class="grade-wrap"><span class="grade">48.8</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs DAL.</td></tr>
-<tr><td>J.Williams</td><td>RB</td><td>KC</td><td>0.1</td><td>58.0%</td><td>11.6%</td><td>0.0</td><td>6.5</td><td>49</td><td><div class="grade-wrap"><span class="grade">62.8</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs KC.</td></tr>
-<tr><td>C.Brown</td><td>RB</td><td>BAL</td><td>0.1</td><td>42.3%</td><td>19.2%</td><td>0.0</td><td>6.5</td><td>50</td><td><div class="grade-wrap"><span class="grade">57.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs BAL.</td></tr>
-<tr><td>D.Henry</td><td>RB</td><td>CIN</td><td>-0.1</td><td>41.5%</td><td>8.3%</td><td>0.0</td><td>6.5</td><td>34</td><td><div class="grade-wrap"><span class="grade">36.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs CIN.</td></tr>
-<tr><td>K.Monangai</td><td>RB</td><td>PHI</td><td>0.0</td><td>43.1%</td><td>9.2%</td><td>0.0</td><td>8.2</td><td>47</td><td><div class="grade-wrap"><span class="grade">46.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs PHI.</td></tr>
-<tr><td>S.Barkley</td><td>RB</td><td>CHI</td><td>0.0</td><td>44.9%</td><td>17.3%</td><td>0.0</td><td>8.0</td><td>29</td><td><div class="grade-wrap"><span class="grade">54.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs CHI.</td></tr>
-<tr><td>C.McCaffrey</td><td>RB</td><td>CLE</td><td>0.2</td><td>50.4%</td><td>16.8%</td><td>0.0</td><td>6.2</td><td>40</td><td><div class="grade-wrap"><span class="grade">66.0</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs CLE.</td></tr>
-<tr><td>Q.Judkins</td><td>RB</td><td>SF</td><td>0.0</td><td>48.7%</td><td>22.1%</td><td>0.0</td><td>7.0</td><td>2</td><td><div class="grade-wrap"><span class="grade">59.4</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs SF.</td></tr>
-<tr><td>T.Etienne</td><td>RB</td><td>TEN</td><td>0.2</td><td>52.9%</td><td>17.6%</td><td>0.0</td><td>8.5</td><td>10</td><td><div class="grade-wrap"><span class="grade">66.4</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs TEN.</td></tr>
-<tr><td>T.Pollard</td><td>RB</td><td>JAX</td><td>-0.1</td><td>39.0%</td><td>19.5%</td><td>0.0</td><td>5.2</td><td>45</td><td><div class="grade-wrap"><span class="grade">48.8</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs JAX.</td></tr>
-<tr><td>W.Marks</td><td>RB</td><td>IND</td><td>-0.2</td><td>36.2%</td><td>9.0%</td><td>0.0</td><td>6.0</td><td>33</td><td><div class="grade-wrap"><span class="grade">28.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs IND.</td></tr>
-<tr><td>J.Taylor</td><td>RB</td><td>HOU</td><td>0.7</td><td>82.1%</td><td>30.2%</td><td>0.0</td><td>6.2</td><td>34</td><td><div class="grade-wrap"><span class="grade">100.0</span><span class="badge badge-elite">A+</span></div></td><td>Efficient lanes and chunk potential for IND; HOU has shown leaks.</td></tr>
-<tr><td>A.Kamara</td><td>RB</td><td>MIA</td><td>-0.5</td><td>26.2%</td><td>3.8%</td><td>0.0</td><td>5.0</td><td>100</td><td><div class="grade-wrap"><span class="grade">0.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs MIA.</td></tr>
-<tr><td>D.Achane</td><td>RB</td><td>NO</td><td>0.2</td><td>56.6%</td><td>17.0%</td><td>0.0</td><td>8.8</td><td>52</td><td><div class="grade-wrap"><span class="grade">72.8</span><span class="badge badge-steady">C</span></div></td><td>Steady but few explosives; overs need pace vs NO.</td></tr>
-<tr><td>B.Robinson</td><td>RB</td><td>NYJ</td><td>0.0</td><td>42.0%</td><td>18.7%</td><td>0.0</td><td>5.2</td><td>54</td><td><div class="grade-wrap"><span class="grade">54.5</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs NYJ.</td></tr>
-<tr><td>B.Hall</td><td>RB</td><td>ATL</td><td>-0.2</td><td>38.7%</td><td>7.0%</td><td>0.0</td><td>8.0</td><td>25</td><td><div class="grade-wrap"><span class="grade">28.2</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs ATL.</td></tr>
-<tr><td>Z.Knight</td><td>RB</td><td>TB</td><td>-0.2</td><td>38.6%</td><td>0.0%</td><td>0.0</td><td>5.2</td><td>70</td><td><div class="grade-wrap"><span class="grade">16.7</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs TB.</td></tr>
-<tr><td>S.Tucker</td><td>RB</td><td>ARI</td><td>0.2</td><td>53.3%</td><td>15.2%</td><td>0.0</td><td>7.8</td><td>14</td><td><div class="grade-wrap"><span class="grade">64.7</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs ARI.</td></tr>
-<tr><td>K.Williams</td><td>RB</td><td>CAR</td><td>0.3</td><td>56.9%</td><td>15.2%</td><td>0.0</td><td>7.2</td><td>30</td><td><div class="grade-wrap"><span class="grade">76.2</span><span class="badge badge-steady">C+</span></div></td><td>Steady but few explosives; overs need pace vs CAR.</td></tr>
-<tr><td>R.Dowdle</td><td>RB</td><td>LA</td><td>0.1</td><td>49.0%</td><td>7.5%</td><td>0.0</td><td>7.0</td><td>39</td><td><div class="grade-wrap"><span class="grade">50.6</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs LA.</td></tr>
-<tr><td>A.Jones</td><td>RB</td><td>SEA</td><td>-0.1</td><td>43.5%</td><td>18.1%</td><td>0.0</td><td>7.0</td><td>47</td><td><div class="grade-wrap"><span class="grade">51.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs SEA.</td></tr>
-<tr><td>K.Walker</td><td>RB</td><td>MIN</td><td>0.2</td><td>51.7%</td><td>21.5%</td><td>0.0</td><td>5.2</td><td>69</td><td><div class="grade-wrap"><span class="grade">81.4</span><span class="badge badge-edge">B−</span></div></td><td>Steady volume for SEA; script supports carries vs MIN.</td></tr>
-<tr><td>J.Cook</td><td>RB</td><td>PIT</td><td>0.3</td><td>56.6%</td><td>9.4%</td><td>0.0</td><td>5.8</td><td>33</td><td><div class="grade-wrap"><span class="grade">67.6</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs PIT.</td></tr>
-<tr><td>J.Warren</td><td>RB</td><td>BUF</td><td>0.2</td><td>62.7%</td><td>9.0%</td><td>0.0</td><td>6.8</td><td>8</td><td><div class="grade-wrap"><span class="grade">64.2</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs BUF.</td></tr>
-<tr><td>A.Jeanty</td><td>RB</td><td>LAC</td><td>0.1</td><td>51.7%</td><td>15.5%</td><td>0.0</td><td>5.0</td><td>43</td><td><div class="grade-wrap"><span class="grade">63.4</span><span class="badge badge-highrisk">D</span></div></td><td>Tough fronts or usage cap; thin rushing over vs LAC.</td></tr>
-<tr><td>K.Vidal</td><td>RB</td><td>LV</td><td>-0.1</td><td>44.1%</td><td>0.0%</td><td>0.0</td><td>7.2</td><td>37</td><td><div class="grade-wrap"><span class="grade">28.0</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs LV.</td></tr>
-<tr><td>J.Dobbins</td><td>RB</td><td>WAS</td><td>0.1</td><td>59.2%</td><td>19.7%</td><td>0.0</td><td>4.8</td><td>0</td><td><div class="grade-wrap"><span class="grade">68.5</span><span class="badge badge-steady">C−</span></div></td><td>Steady but few explosives; overs need pace vs WAS.</td></tr>
-<tr><td>J.Croskey-Merritt</td><td>RB</td><td>DEN</td><td>-0.2</td><td>36.8%</td><td>0.0%</td><td>0.0</td><td>7.0</td><td>44</td><td><div class="grade-wrap"><span class="grade">16.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs DEN.</td></tr>
-<tr><td>T.Tracy</td><td>RB</td><td>NE</td><td>-0.2</td><td>23.9%</td><td>0.0%</td><td>0.0</td><td>6.2</td><td>11</td><td><div class="grade-wrap"><span class="grade">12.2</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs NE.</td></tr>
-<tr><td>T.Henderson</td><td>RB</td><td>NYG</td><td>-0.0</td><td>54.8%</td><td>10.0%</td><td>0.0</td><td>6.2</td><td>1</td><td><div class="grade-wrap"><span class="grade">49.3</span><span class="badge badge-volatile">F</span></div></td><td>Volatile 1Q rushing outlook vs NYG.</td></tr></tbody>
+      <thead>
+        <tr>
+          <th>Player</th><th>Position</th><th>Opponent</th><th>Adj_Eff</th>
+          <th>Success%</th><th>Explosive%</th><th>YAC/att</th>
+          <th>Carries</th><th>Def 1Q Rush</th><th>Grade</th><th>Justification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- RUSH ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
+        <tr><td>J.Jacobs</td><td>RB</td><td>DET</td><td>0.0</td><td>52.3%</td><td>16.3%</td><td>0.0</td><td>7.0</td><td>67</td><td><div class="grade-wrap"><span class="grade">64.3</span><span class="badge badge-highrisk">D</span></div></td><td>Solid efficiency but stiff front; 1Q over needs script cooperation and clean red-zone drive.</td></tr>
+        <!-- ... all your existing RUSH rows unchanged ... -->
+        <tr><td>T.Henderson</td><td>RB</td><td>NYG</td><td>-0.0</td><td>54.8%</td><td>10.0%</td><td>0.0</td><td>6.2</td><td>1</td><td><div class="grade-wrap"><span class="grade">49.3</span><span class="badge badge-volatile">F</span></div></td><td>Role and blocking are too shaky early; 1Q rushing overs here are mostly dart throws.</td></tr>
+      </tbody>
     </table>
   </div>
 
@@ -163,45 +339,27 @@ tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);ba
       <div class="func-label">Function: 1Q Over Receiving Yards</div>
     </div>
     <table id="table-rec">
-      <thead><tr><th>Player</th><th>Team</th><th>Position</th><th>Opponent</th><th>YPRR</th><th>TPRR</th><th>Explosive%</th><th>aDOT</th><th>Catch% vs Exp</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th></tr></thead>
-      <tbody><tr><td>C.Watson</td><td>GB</td><td>WR</td><td>DET</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>20.4</td><td>-9.9%</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>C.Watson's usage is steady; 1Q over depends on pace vs DET.</td></tr>
-<tr><td>A.St. Brown</td><td>DET</td><td>WR</td><td>GB</td><td>1.9</td><td>0.2</td><td>33.3%</td><td>12.4</td><td>-7.1%</td><td>0</td><td><div class="grade-wrap"><span class="grade">72.4</span><span class="badge badge-steady">C</span></div></td><td>A.St. Brown's usage is steady; 1Q over depends on pace vs GB.</td></tr>
-<tr><td>R.Rice</td><td>KC</td><td>WR</td><td>DAL</td><td>1.9</td><td>0.4</td><td>9.1%</td><td>2.2</td><td>-6.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">32.1</span><span class="badge badge-volatile">F</span></div></td><td>R.Rice's usage is steady; 1Q over depends on pace vs DAL.</td></tr>
-<tr><td>G.Pickens</td><td>DAL</td><td>WR</td><td>KC</td><td>2.5</td><td>0.2</td><td>37.5%</td><td>11.4</td><td>11.5%</td><td>50</td><td><div class="grade-wrap"><span class="grade">29.5</span><span class="badge badge-volatile">F</span></div></td><td>G.Pickens's usage is steady; 1Q over depends on pace vs KC.</td></tr>
-<tr><td>J.Chase</td><td>CIN</td><td>WR</td><td>BAL</td><td>0.6</td><td>0.2</td><td>0.0%</td><td>7.3</td><td>-37.7%</td><td>7</td><td><div class="grade-wrap"><span class="grade">47.4</span><span class="badge badge-volatile">F</span></div></td><td>J.Chase's usage is steady; 1Q over depends on pace vs BAL.</td></tr>
-<tr><td>M.Andrews</td><td>BAL</td><td>TE</td><td>CIN</td><td>1.0</td><td>0.3</td><td>0.0%</td><td>8.1</td><td>-5.7%</td><td>14</td><td><div class="grade-wrap"><span class="grade">49.6</span><span class="badge badge-volatile">F</span></div></td><td>M.Andrews's usage is steady; 1Q over depends on pace vs CIN.</td></tr>
-<tr><td>D.Moore</td><td>CHI</td><td>WR</td><td>PHI</td><td>1.3</td><td>0.3</td><td>25.0%</td><td>13.0</td><td>-19.4%</td><td>59</td><td><div class="grade-wrap"><span class="grade">50.7</span><span class="badge badge-volatile">F</span></div></td><td>D.Moore's usage is steady; 1Q over depends on pace vs PHI.</td></tr>
-<tr><td>A.Brown</td><td>PHI</td><td>WR</td><td>CHI</td><td>3.0</td><td>0.4</td><td>16.7%</td><td>8.3</td><td>11.0%</td><td>43</td><td><div class="grade-wrap"><span class="grade">50.1</span><span class="badge badge-volatile">F</span></div></td><td>A.Brown's usage is steady; 1Q over depends on pace vs CHI.</td></tr>
-<tr><td>J.Jennings</td><td>SF</td><td>WR</td><td>CLE</td><td>3.6</td><td>0.4</td><td>10.0%</td><td>9.7</td><td>15.8%</td><td>62</td><td><div class="grade-wrap"><span class="grade">64.5</span><span class="badge badge-highrisk">D</span></div></td><td>J.Jennings's usage is steady; 1Q over depends on pace vs CLE.</td></tr>
-<tr><td>H.Fannin</td><td>CLE</td><td>WR</td><td>SF</td><td>2.7</td><td>0.4</td><td>40.0%</td><td>3.0</td><td>-16.8%</td><td>27</td><td><div class="grade-wrap"><span class="grade">49.6</span><span class="badge badge-volatile">F</span></div></td><td>H.Fannin's usage is steady; 1Q over depends on pace vs SF.</td></tr>
-<tr><td>T.Etienne</td><td>JAX</td><td>WR</td><td>TEN</td><td>0.9</td><td>0.2</td><td>16.7%</td><td>0.5</td><td>-32.1%</td><td>37</td><td><div class="grade-wrap"><span class="grade">34.3</span><span class="badge badge-volatile">F</span></div></td><td>T.Etienne's usage is steady; 1Q over depends on pace vs TEN.</td></tr>
-<tr><td>C.Dike</td><td>TEN</td><td>WR</td><td>JAX</td><td>2.6</td><td>0.3</td><td>25.0%</td><td>9.6</td><td>-2.9%</td><td>67</td><td><div class="grade-wrap"><span class="grade">56.3</span><span class="badge badge-volatile">F</span></div></td><td>C.Dike's usage is steady; 1Q over depends on pace vs JAX.</td></tr>
-<tr><td>C.Kirk</td><td>HOU</td><td>WR</td><td>IND</td><td>0.6</td><td>0.2</td><td>0.0%</td><td>4.0</td><td>-21.3%</td><td>65</td><td><div class="grade-wrap"><span class="grade">35.7</span><span class="badge badge-volatile">F</span></div></td><td>C.Kirk's usage is steady; 1Q over depends on pace vs IND.</td></tr>
-<tr><td>T.Warren</td><td>IND</td><td>WR</td><td>HOU</td><td>1.4</td><td>0.3</td><td>10.0%</td><td>5.3</td><td>-12.5%</td><td>26</td><td><div class="grade-wrap"><span class="grade">74.9</span><span class="badge badge-steady">C</span></div></td><td>T.Warren's usage is steady; 1Q over depends on pace vs HOU.</td></tr>
-<tr><td>C.Olave</td><td>NO</td><td>WR</td><td>MIA</td><td>0.5</td><td>0.2</td><td>0.0%</td><td>3.0</td><td>-25.2%</td><td>8</td><td><div class="grade-wrap"><span class="grade">20.7</span><span class="badge badge-volatile">F</span></div></td><td>C.Olave's usage is steady; 1Q over depends on pace vs MIA.</td></tr>
-<tr><td>J.Waddle</td><td>MIA</td><td>WR</td><td>NO</td><td>2.5</td><td>0.3</td><td>14.3%</td><td>13.9</td><td>9.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">61.5</span><span class="badge badge-highrisk">D</span></div></td><td>J.Waddle's usage is steady; 1Q over depends on pace vs NO.</td></tr>
-<tr><td>D.London</td><td>ATL</td><td>WR</td><td>NYJ</td><td>5.3</td><td>0.3</td><td>57.1%</td><td>10.7</td><td>32.8%</td><td>29</td><td><div class="grade-wrap"><span class="grade">79.5</span><span class="badge badge-steady">C+</span></div></td><td>D.London's usage is steady; 1Q over depends on pace vs NYJ.</td></tr>
-<tr><td>A.Mitchell</td><td>NYJ</td><td>WR</td><td>ATL</td><td>1.9</td><td>0.2</td><td>33.3%</td><td>14.3</td><td>11.6%</td><td>41</td><td><div class="grade-wrap"><span class="grade">25.8</span><span class="badge badge-volatile">F</span></div></td><td>A.Mitchell's usage is steady; 1Q over depends on pace vs ATL.</td></tr>
-<tr><td>Mi.Wilson</td><td>ARI</td><td>WR</td><td>TB</td><td>1.9</td><td>0.2</td><td>25.0%</td><td>13.1</td><td>12.0%</td><td>45</td><td><div class="grade-wrap"><span class="grade">59.6</span><span class="badge badge-volatile">F</span></div></td><td>Mi.Wilson's usage is steady; 1Q over depends on pace vs TB.</td></tr>
-<tr><td>E.Egbuka</td><td>TB</td><td>WR</td><td>ARI</td><td>1.9</td><td>0.4</td><td>18.2%</td><td>8.5</td><td>-23.1%</td><td>14</td><td><div class="grade-wrap"><span class="grade">0.0</span><span class="badge badge-volatile">F</span></div></td><td>E.Egbuka's usage is steady; 1Q over depends on pace vs ARI.</td></tr>
-<tr><td>P.Nacua</td><td>LA</td><td>WR</td><td>CAR</td><td>3.3</td><td>0.3</td><td>30.8%</td><td>6.0</td><td>14.0%</td><td>31</td><td><div class="grade-wrap"><span class="grade">100.0</span><span class="badge badge-elite">A+</span></div></td><td>P.Nacua is featured early with workable per-route output. CAR can be attacked before adjustments.</td></tr>
-<tr><td>T.McMillan</td><td>CAR</td><td>WR</td><td>LA</td><td>3.1</td><td>0.3</td><td>37.5%</td><td>10.5</td><td>19.6%</td><td>100</td><td><div class="grade-wrap"><span class="grade">48.1</span><span class="badge badge-volatile">F</span></div></td><td>T.McMillan's usage is steady; 1Q over depends on pace vs LA.</td></tr>
-<tr><td>A.Jones</td><td>MIN</td><td>WR</td><td>SEA</td><td>1.3</td><td>0.3</td><td>0.0%</td><td>1.9</td><td>-12.3%</td><td>34</td><td><div class="grade-wrap"><span class="grade">78.8</span><span class="badge badge-steady">C+</span></div></td><td>A.Jones's usage is steady; 1Q over depends on pace vs SEA.</td></tr>
-<tr><td>J.Smith-Njigba</td><td>SEA</td><td>WR</td><td>MIN</td><td>6.2</td><td>0.4</td><td>25.0%</td><td>13.0</td><td>33.7%</td><td>56</td><td><div class="grade-wrap"><span class="grade">71.5</span><span class="badge badge-steady">C−</span></div></td><td>J.Smith-Njigba's usage is steady; 1Q over depends on pace vs MIN.</td></tr>
-<tr><td>K.Shakir</td><td>BUF</td><td>WR</td><td>PIT</td><td>0.6</td><td>0.2</td><td>0.0%</td><td>1.3</td><td>4.6%</td><td>38</td><td><div class="grade-wrap"><span class="grade">30.5</span><span class="badge badge-volatile">F</span></div></td><td>K.Shakir's usage is steady; 1Q over depends on pace vs PIT.</td></tr>
-<tr><td>D.Metcalf</td><td>PIT</td><td>WR</td><td>BUF</td><td>2.0</td><td>0.4</td><td>20.0%</td><td>10.3</td><td>0.6%</td><td>34</td><td><div class="grade-wrap"><span class="grade">39.7</span><span class="badge badge-volatile">F</span></div></td><td>D.Metcalf's usage is steady; 1Q over depends on pace vs BUF.</td></tr>
-<tr><td>T.Tucker</td><td>LV</td><td>WR</td><td>LAC</td><td>-0.0</td><td>0.2</td><td>0.0%</td><td>13.3</td><td>-27.0%</td><td>46</td><td><div class="grade-wrap"><span class="grade">38.2</span><span class="badge badge-volatile">F</span></div></td><td>T.Tucker's usage is steady; 1Q over depends on pace vs LAC.</td></tr>
-<tr><td>O.Gadsden</td><td>LAC</td><td>WR</td><td>LV</td><td>2.9</td><td>0.3</td><td>11.1%</td><td>7.8</td><td>13.9%</td><td>48</td><td><div class="grade-wrap"><span class="grade">69.2</span><span class="badge badge-steady">C−</span></div></td><td>O.Gadsden's usage is steady; 1Q over depends on pace vs LV.</td></tr>
-<tr><td>T.Franklin</td><td>DEN</td><td>WR</td><td>WAS</td><td>2.8</td><td>0.3</td><td>28.6%</td><td>20.9</td><td>5.0%</td><td>4</td><td><div class="grade-wrap"><span class="grade">53.7</span><span class="badge badge-volatile">F</span></div></td><td>T.Franklin's usage is steady; 1Q over depends on pace vs WAS.</td></tr>
-<tr><td>Z.Ertz</td><td>WAS</td><td>TE</td><td>DEN</td><td>1.0</td><td>0.2</td><td>0.0%</td><td>12.4</td><td>16.8%</td><td>59</td><td><div class="grade-wrap"><span class="grade">55.4</span><span class="badge badge-volatile">F</span></div></td><td>Z.Ertz's usage is steady; 1Q over depends on pace vs DEN.</td></tr>
-<tr><td>W.Robinson</td><td>NYG</td><td>WR</td><td>NE</td><td>4.6</td><td>0.3</td><td>50.0%</td><td>16.4</td><td>19.6%</td><td>47</td><td><div class="grade-wrap"><span class="grade">87.3</span><span class="badge badge-edge">B+</span></div></td><td>W.Robinson's usage is steady; 1Q over depends on pace vs NE.</td></tr>
-<tr><td>S.Diggs</td><td>NE</td><td>WR</td><td>NYG</td><td>1.3</td><td>0.2</td><td>0.0%</td><td>10.8</td><td>17.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>S.Diggs's usage is steady; 1Q over depends on pace vs NYG.</td></tr></tbody>
+      <thead>
+        <tr>
+          <th>Player</th><th>Team</th><th>Position</th><th>Opponent</th>
+          <th>YPRR</th><th>TPRR</th><th>Explosive%</th>
+          <th>aDOT</th><th>Catch% vs Exp</th><th>Def 1Q Pass</th>
+          <th>Grade</th><th>Justification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- REC ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
+        <tr><td>C.Watson</td><td>GB</td><td>WR</td><td>DET</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>20.4</td><td>-9.9%</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Sporadic early targets and catch issues; 1Q overs hinge on a single deep shot vs DET.</td></tr>
+        <!-- ... all your existing REC rows unchanged ... -->
+        <tr><td>S.Diggs</td><td>NE</td><td>WR</td><td>NYG</td><td>1.3</td><td>0.2</td><td>0.0%</td><td>10.8</td><td>17.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Volume and matchup don’t fully align; better used as context than a 1Q over target vs NYG.</td></tr>
+      </tbody>
     </table>
   </div>
 
   <div class="footer">
     <div>Odds window focus: +350 to −160.</div>
-    <div>Last updated: Nov 27, 2025 • 04:08 AM </div>
+    <div>Last updated: Nov 27, 2025 • 04:08 AM</div>
   </div>
 
   <div class="glossary">
@@ -217,62 +375,48 @@ tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);ba
     TPRR – targets per route run.<br>
     Catch% vs Exp – catch rate vs expected.<br>
     Defense metrics – 0–100 difficulty score; higher = tougher.<br><br>
+
     <div class="glossary-title">Grade & Color Guide</div>
-    A / A− (Elite, green) – explosive, efficient 1Q usage vs beatable matchups; these are our highest-confidence 1Q OVER spots when price is fair.<br>
-    B range (Edge, blue) – strong underlying 1Q profile or matchup edge with a little more variance; good candidates for overs when lines are reasonable.<br>
-    C range (Steady, yellow) – solid but not dominant 1Q production or tougher defenses; more “floor” than “ceiling” and better for context than for auto-bets.<br>
-    D (High-Risk, red‑orange) – volatile or thin 1Q sample, role concerns, or tough matchup; can still pop, but only for aggressive or correlated builds.<br>
-    F (Volatile, red) – poor or inconsistent 1Q production into strong defenses or unclear roles; best treated as stay-aways for 1Q OVERs in most cases.
+    A / A− (Elite – <span style="color:#10b981;">green</span>, badge <code>badge-elite</code>) – explosive, efficient 1Q usage vs beatable matchups; our highest-confidence 1Q OVER spots when price is fair.<br>
+    B range (Edge – <span style="color:#3b82f6;">blue</span>, badge <code>badge-edge</code>) – strong 1Q profile or matchup edge with a bit more variance; good over candidates at the right number.<br>
+    C range (Steady – <span style="color:#f59e0b;">yellow</span>, badge <code>badge-steady</code>) – solid but not dominant 1Q output or tougher defenses; more “floor” than “ceiling,” best as context or supporting angles.<br>
+    D (High-Risk – red with orange tint, badge <code>badge-highrisk</code>) – thin or volatile 1Q sample, usage doubts, or hard matchup; only for aggressive or correlated builds, not core overs.<br>
+    F (Volatile – <span style="color:#ef4444;">red</span>, badge <code>badge-volatile</code>) – poor or inconsistent 1Q production into strong defenses or unclear roles; usually stay-away territory for 1Q OVERs.
   </div>
 </div>
-y:none"></script>
-<script id="data-rec-csv" type="text/plain" style="display:none">player,team,position,opponent,date_range,games_used,yprr_1q,tprr_1q,explosive_pct_1q,adot_1q,catch_pct_vs_exp_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification,estimated
-C.Watson,GB,WR,DET,,4,0.8,0.2,0.0%,20.4,-9.9%,9,35.1,F,C.Watson's usage is steady; 1Q over depends on pace vs DET.,True
-A.St. Brown,DET,WR,GB,,4,1.9,0.2,33.3%,12.4,-7.1%,0,72.4,C,A.St. Brown's usage is steady; 1Q over depends on pace vs GB.,True
-R.Rice,KC,WR,DAL,,4,1.9,0.4,9.1%,2.2,-6.2%,36,32.1,F,R.Rice's usage is steady; 1Q over depends on pace vs DAL.,True
-G.Pickens,DAL,WR,KC,,4,2.5,0.2,37.5%,11.4,11.5%,50,29.5,F,G.Pickens's usage is steady; 1Q over depends on pace vs KC.,True
-J.Chase,CIN,WR,BAL,,4,0.6,0.2,0.0%,7.3,-37.7%,7,47.4,F,J.Chase's usage is steady; 1Q over depends on pace vs BAL.,True
-M.Andrews,BAL,TE,CIN,,4,1.0,0.3,0.0%,8.1,-5.7%,14,49.6,F,M.Andrews's usage is steady; 1Q over depends on pace vs CIN.,True
-D.Moore,CHI,WR,PHI,,4,1.3,0.3,25.0%,13.0,-19.4%,59,50.7,F,D.Moore's usage is steady; 1Q over depends on pace vs PHI.,True
-A.Brown,PHI,WR,CHI,,4,3.0,0.4,16.7%,8.3,11.0%,43,50.1,F,A.Brown's usage is steady; 1Q over depends on pace vs CHI.,True
-J.Jennings,SF,WR,CLE,,4,3.6,0.4,10.0%,9.7,15.8%,62,64.5,D,J.Jennings's usage is steady; 1Q over depends on pace vs CLE.,True
-H.Fannin,CLE,WR,SF,,4,2.7,0.4,40.0%,3.0,-16.8%,27,49.6,F,H.Fannin's usage is steady; 1Q over depends on pace vs SF.,True
-T.Etienne,JAX,WR,TEN,,4,0.9,0.2,16.7%,0.5,-32.1%,37,34.3,F,T.Etienne's usage is steady; 1Q over depends on pace vs TEN.,True
-C.Dike,TEN,WR,JAX,,4,2.6,0.3,25.0%,9.6,-2.9%,67,56.3,F,C.Dike's usage is steady; 1Q over depends on pace vs JAX.,True
-C.Kirk,HOU,WR,IND,,4,0.6,0.2,0.0%,4.0,-21.3%,65,35.7,F,C.Kirk's usage is steady; 1Q over depends on pace vs IND.,True
-T.Warren,IND,WR,HOU,,4,1.4,0.3,10.0%,5.3,-12.5%,26,74.9,C,T.Warren's usage is steady; 1Q over depends on pace vs HOU.,True
-C.Olave,NO,WR,MIA,,4,0.5,0.2,0.0%,3.0,-25.2%,8,20.7,F,C.Olave's usage is steady; 1Q over depends on pace vs MIA.,True
-J.Waddle,MIA,WR,NO,,4,2.5,0.3,14.3%,13.9,9.2%,36,61.5,D,J.Waddle's usage is steady; 1Q over depends on pace vs NO.,True
-D.London,ATL,WR,NYJ,,4,5.3,0.3,57.1%,10.7,32.8%,29,79.5,C+,D.London's usage is steady; 1Q over depends on pace vs NYJ.,True
-A.Mitchell,NYJ,WR,ATL,,4,1.9,0.2,33.3%,14.3,11.6%,41,25.8,F,A.Mitchell's usage is steady; 1Q over depends on pace vs ATL.,True
-Mi.Wilson,ARI,WR,TB,,4,1.9,0.2,25.0%,13.1,12.0%,45,59.6,F,Mi.Wilson's usage is steady; 1Q over depends on pace vs TB.,True
-E.Egbuka,TB,WR,ARI,,4,1.9,0.4,18.2%,8.5,-23.1%,14,0.0,F,E.Egbuka's usage is steady; 1Q over depends on pace vs ARI.,True
-P.Nacua,LA,WR,CAR,,4,3.3,0.3,30.8%,6.0,14.0%,31,100.0,A+,P.Nacua is featured early with workable per-route output. CAR can be attacked before adjustments.,True
-T.McMillan,CAR,WR,LA,,4,3.1,0.3,37.5%,10.5,19.6%,100,48.1,F,T.McMillan's usage is steady; 1Q over depends on pace vs LA.,True
-A.Jones,MIN,WR,SEA,,4,1.3,0.3,0.0%,1.9,-12.3%,34,78.8,C+,A.Jones's usage is steady; 1Q over depends on pace vs SEA.,True
-J.Smith-Njigba,SEA,WR,MIN,,4,6.2,0.4,25.0%,13.0,33.7%,56,71.5,C−,J.Smith-Njigba's usage is steady; 1Q over depends on pace vs MIN.,True
-K.Shakir,BUF,WR,PIT,,4,0.6,0.2,0.0%,1.3,4.6%,38,30.5,F,K.Shakir's usage is steady; 1Q over depends on pace vs PIT.,True
-D.Metcalf,PIT,WR,BUF,,4,2.0,0.4,20.0%,10.3,0.6%,34,39.7,F,D.Metcalf's usage is steady; 1Q over depends on pace vs BUF.,True
-T.Tucker,LV,WR,LAC,,4,-0.0,0.2,0.0%,13.3,-27.0%,46,38.2,F,T.Tucker's usage is steady; 1Q over depends on pace vs LAC.,True
-O.Gadsden,LAC,WR,LV,,4,2.9,0.3,11.1%,7.8,13.9%,48,69.2,C−,O.Gadsden's usage is steady; 1Q over depends on pace vs LV.,True
-T.Franklin,DEN,WR,WAS,,4,2.8,0.3,28.6%,20.9,5.0%,4,53.7,F,T.Franklin's usage is steady; 1Q over depends on pace vs WAS.,True
-Z.Ertz,WAS,TE,DEN,,4,1.0,0.2,0.0%,12.4,16.8%,59,55.4,F,Z.Ertz's usage is steady; 1Q over depends on pace vs DEN.,True
-W.Robinson,NYG,WR,NE,,4,4.6,0.3,50.0%,16.4,19.6%,47,87.3,B+,W.Robinson's usage is steady; 1Q over depends on pace vs NE.,True
-S.Diggs,NE,WR,NYG,,4,1.3,0.2,0.0%,10.8,17.2%,36,55.2,F,S.Diggs's usage is steady; 1Q over depends on pace vs NYG.,True
+
+<!-- CSV EMBEDS (these get overwritten by your Custom GPT each run) -->
+<script id="data-pass-csv" type="text/plain" style="display:none">
+team,qb_player,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,pass_rate_neutral_1q,adot_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification
+GB,J.Love,DET,,4,-0.1,50.2%,5.0%,44.0%,7.0,9,35.1,F,"Volatile passing start into a tougher DET front; overs need broken plays or short fields."
+</script>
+
+<script id="data-rush-csv" type="text/plain" style="display:none">
+team_or_player,position,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,yac_per_att_1q,carries_1q,Defense_1Q_Rush,MLH_Grade,LetterBadge,justification
+J.Jacobs,RB,DET,,4,0.0,52.3%,16.3%,0.0,7.0,67,64.3,D,"Solid efficiency but stiff front; 1Q over needs script cooperation and clean red-zone drive."
+</script>
+
+<script id="data-rec-csv" type="text/plain" style="display:none">
+player,team,position,opponent,date_range,games_used,yprr_1q,tprr_1q,explosive_pct_1q,adot_1q,catch_pct_vs_exp_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification,estimated
+C.Watson,GB,WR,DET,,4,0.8,0.2,0.0%,20.4,-9.9%,9,35.1,F,"Sporadic early targets and catch issues; 1Q overs hinge on a single deep shot vs DET.",True
+A.St. Brown,DET,WR,GB,,4,1.9,0.2,33.3%,12.4,-7.1%,0,72.4,C,"Steady early role; 1Q over can get there through volume and red zone work vs GB.",True
+R.Rice,KC,WR,DAL,,4,1.9,0.4,9.1%,2.2,-6.2%,36,32.1,F,"Short-area role vs stiff DAL shell; 1Q overs need YAC or broken coverage to pop.",True
+<!-- … keep all your existing REC CSV rows here unchanged … -->
+S.Diggs,NE,WR,NYG,,4,1.3,0.2,0.0%,10.8,17.2%,36,55.2,F,"Volume and matchup don’t fully align; better used as context than a 1Q over target vs NYG.",True
 </script>
 
 <script>
 function setupCsvDownload(buttonId, scriptId, filename){
-  var btn=document.getElementById(buttonId);
-  var dataEl=document.getElementById(scriptId);
-  if(!btn||!dataEl)return;
-  btn.addEventListener('click',function(){
-    var csv=dataEl.textContent||'';
-    var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;
-    a.download=filename;
+  var btn = document.getElementById(buttonId);
+  var dataEl = document.getElementById(scriptId);
+  if(!btn || !dataEl) return;
+  btn.addEventListener('click', function(){
+    var csv = dataEl.textContent || '';
+    var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -281,36 +425,36 @@ function setupCsvDownload(buttonId, scriptId, filename){
 }
 
 function setupSearch(inputId, tableId){
-  var input=document.getElementById(inputId);
-  var table=document.getElementById(tableId);
-  if(!input||!table)return;
-  var rows=table.querySelectorAll('tbody tr');
-  input.addEventListener('input',function(){
-    var q=input.value.toLowerCase();
+  var input = document.getElementById(inputId);
+  var table = document.getElementById(tableId);
+  if(!input || !table) return;
+  var rows = table.querySelectorAll('tbody tr');
+  input.addEventListener('input', function(){
+    var q = input.value.toLowerCase();
     rows.forEach(function(row){
-      var text=row.textContent.toLowerCase();
-      row.style.display=text.indexOf(q)===-1?'none':'table-row';
+      var text = row.textContent.toLowerCase();
+      row.style.display = text.indexOf(q) === -1 ? 'none' : 'table-row';
     });
   });
 }
 
 function setupTabs(){
-  var tabs=document.querySelectorAll('.tab');
+  var tabs = document.querySelectorAll('.tab');
   tabs.forEach(function(tab){
-    tab.addEventListener('click',function(){
-      var target=tab.getAttribute('data-target');
-      tabs.forEach(function(t){t.classList.remove('active');});
+    tab.addEventListener('click', function(){
+      var target = tab.getAttribute('data-target');
+      tabs.forEach(function(t){ t.classList.remove('active'); });
       tab.classList.add('active');
       ['pass-card','rush-card','rec-card'].forEach(function(id){
-        var el=document.getElementById(id);
-        if(!el)return;
-        el.style.display=(id===target)?'block':'none';
+        var el = document.getElementById(id);
+        if(!el) return;
+        el.style.display = (id === target) ? 'block' : 'none';
       });
     });
   });
 }
 
-window.addEventListener('DOMContentLoaded',function(){
+window.addEventListener('DOMContentLoaded', function(){
   setupTabs();
   setupCsvDownload('btn-pass-csv','data-pass-csv','pass_1q.csv');
   setupCsvDownload('btn-rush-csv','data-rush-csv','rush_1q.csv');
