@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Moneyline Hacks — 1Q Sheets (Week 13)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --mlh-bg: #020617;
+      --mlh-bg-card: #0b1120;
+      --mlh-bg-elevated: #020617;
+      --mlh-border-subtle: #1f2937;
+      --mlh-text: #e5e7eb;
+      --mlh-text-muted: #9ca3af;
+      --mlh-green: #22c55e;
+      --mlh-blue: #0ea5e9;
+      --mlh-shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --mlh-radius-lg: 18px;
+      --mlh-radius-md: 12px;
+      --mlh-radius-pill: 999px;
+      --mlh-transition-fast: 0.16s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 45%, #020617 100%);
+      color: var(--mlh-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #mlh-root {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 12px 80px;
+    }
+
+    @media (min-width: 768px) {
+      #mlh-root {
+        padding: 24px 20px 40px;
+      }
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: conic-gradient(from 180deg, #22c55e, #0ea5e9, #22c55e);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-icon::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 10%, rgba(248, 250, 252, 0.9), transparent 55%);
+    }
+
+    .logo-text-main {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-line-top {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--mlh-text-muted);
+    }
+
+    .logo-line-bottom {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    @media (min-width: 768px) {
+      .logo-line-bottom {
+        font-size: 20px;
+      }
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .meta-pill {
+      font-size: 11px;
+      border-radius: var(--mlh-radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 4px 9px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8));
+      color: var(--mlh-text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .meta-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #166534);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .meta-strong {
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border-radius: var(--mlh-radius-pill);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .tab {
+      border-radius: var(--mlh-radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--mlh-text-muted);
+      font-size: 11px;
+      padding: 6px 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--mlh-transition-fast), color var(--mlh-transition-fast), box-shadow var(--mlh-transition-fast), transform var(--mlh-transition-fast);
+    }
+
+    .tab-icon {
+      font-size: 13px;
+    }
+
+    .tab.active {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.85), rgba(22, 163, 74, 0.9));
+      color: #f9fafb;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .header-sub {
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+      margin-top: 2px;
+    }
+
+    /* PANEL / CARD */
+    .panel {
+      display: none;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+      border-radius: var(--mlh-radius-lg);
+      border: 1px solid var(--mlh-border-subtle);
+      box-shadow: var(--mlh-shadow-soft);
+      padding: 14px 12px 12px;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    @media (min-width: 768px) {
+      .panel-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .panel-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .panel-title span {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--mlh-text-muted);
+      margin-left: 6px;
+    }
+
+    .panel-tagline {
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+    }
+
+    .panel-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: var(--mlh-radius-md);
+      border: 1px solid var(--mlh-border-subtle);
+      background: #020617;
+      color: var(--mlh-text);
+      font-size: 11px;
+      padding: 7px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--mlh-transition-fast), box-shadow var(--mlh-transition-fast), transform var(--mlh-transition-fast);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      border-color: #0ea5e9;
+      color: #f9fafb;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.9);
+    }
+
+    .btn-icon {
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.9);
+    }
+
+    .toolbar {
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    @media (min-width: 768px) {
+      .toolbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .toolbar-main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-wrap {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .search-inner {
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      border-radius: var(--mlh-radius-md);
+      border: 1px solid var(--mlh-border-subtle);
+      background: #020617;
+      color: var(--mlh-text);
+      font-size: 13px;
+      padding: 9px 10px 9px 28px;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #6b7280;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .grade-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-pill {
+      border-radius: var(--mlh-radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--mlh-text-muted);
+      font-size: 10px;
+      padding: 4px 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: background var(--mlh-transition-fast), color var(--mlh-transition-fast), box-shadow var(--mlh-transition-fast), transform var(--mlh-transition-fast);
+    }
+
+    .filter-pill.active {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), rgba(22, 163, 74, 0.4));
+      color: #f9fafb;
+      border-color: rgba(94, 234, 212, 0.9);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.9);
+      transform: translateY(-0.5px);
+    }
+
+    .toolbar-note {
+      font-size: 10px;
+      color: var(--mlh-text-muted);
+    }
+
+    /* DESKTOP TABLE VIEW */
+    .table-wrapper {
+      display: none;
+      border-radius: var(--mlh-radius-lg);
+      border: 1px solid rgba(15, 23, 42, 0.96);
+      background: radial-gradient(circle at top left, rgba(2, 6, 23, 0.98), rgba(2, 6, 23, 1));
+      overflow: hidden;
+    }
+
+    @media (min-width: 900px) {
+      .table-wrapper {
+        display: block;
+      }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      font-size: 12px;
+    }
+
+    thead th {
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--mlh-text-muted);
+      border-bottom: 1px solid rgba(31, 41, 55, 0.95);
+    }
+
+    tbody tr {
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    tbody td {
+      background: #020617;
+      padding: 10px 10px;
+      border-top: 1px solid rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.95);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      transform: scale(1.003);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.85);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    tbody tr:hover td {
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .grade-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .grade-number {
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: var(--mlh-radius-pill);
+      font-weight: 700;
+      font-size: 11px;
+      border: 1px solid transparent;
+      min-width: 40px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .badge-elite {
+      background: #052e2b;
+      border-color: #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.9);
+      color: #6ee7b7;
+    }
+
+    .badge-edge {
+      background: #0a223f;
+      border-color: #3b82f6;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.9);
+      color: #93c5fd;
+    }
+
+    .badge-steady {
+      background: #3a2a06;
+      border-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.9);
+      color: #facc15;
+    }
+
+    .badge-highrisk {
+      background: #3a0704;
+      border-color: #fb923c;
+      box-shadow: 0 0 12px rgba(251, 146, 60, 0.9);
+      color: #fed7aa;
+    }
+
+    .badge-volatile {
+      background: #3a0a0a;
+      border-color: #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.9);
+      color: #fecaca;
+    }
+
+    .just {
+      max-width: 460px;
+      white-space: normal;
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+      line-height: 1.45;
+    }
+
+    .panel-footer {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    /* MOBILE ACCORDION VIEW */
+    .mobile-list {
+      display: block;
+      margin-top: 4px;
+    }
+
+    @media (min-width: 900px) {
+      .mobile-list {
+        display: none;
+      }
+    }
+
+    .mobile-card {
+      margin-bottom: 8px;
+      border-radius: var(--mlh-radius-lg);
+      border: 1px solid rgba(15, 23, 42, 0.96);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+
+    .card-accordion {
+      border: none;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+    }
+
+    .card-accordion[open] > .card-summary {
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .card-summary {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;
+      cursor: pointer;
+    }
+
+    .card-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-line-top {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .summary-line-bottom {
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+    }
+
+    .summary-grade {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      font-size: 10px;
+    }
+
+    .summary-arrow {
+      font-size: 10px;
+      color: var(--mlh-text-muted);
+    }
+
+    .card-content {
+      padding: 8px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-strip {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .metric-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .metric-pill {
+      min-width: 115px;
+      border-radius: 12px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 6px 8px;
+      background: #020617;
+      font-size: 11px;
+    }
+
+    .metric-label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--mlh-text-muted);
+      margin-bottom: 2px;
+    }
+
+    .metric-value {
+      font-size: 12px;
+    }
+
+    .card-just {
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+      line-height: 1.45;
+    }
+
+    /* GLOSSARY */
+    .glossary {
+      margin-top: 10px;
+      padding: 12px 14px 14px;
+      border-radius: var(--mlh-radius-lg);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid rgba(31, 41, 55, 0.96);
+      font-size: 11px;
+      color: var(--mlh-text-muted);
+      line-height: 1.55;
+    }
+
+    .glossary-title {
+      font-weight: 700;
+      color: #f9fafb;
+      margin-bottom: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px 18px;
+    }
+
+    @media (min-width: 768px) {
+      .glossary-grid {
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      }
+    }
+
+    .glossary-label {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    /* BOTTOM NAV (MOBILE) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      padding: 6px 10px;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .bottom-nav-inner {
+      pointer-events: auto;
+      border-radius: var(--mlh-radius-pill);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(30, 64, 175, 0.95);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.95);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 5px;
+    }
+
+    .bottom-nav-btn {
+      flex: 1;
+      border-radius: var(--mlh-radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--mlh-text-muted);
+      font-size: 10px;
+      padding: 6px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: center;
+      cursor: pointer;
+      transition: background var(--mlh-transition-fast), color var(--mlh-transition-fast), transform var(--mlh-transition-fast), box-shadow var(--mlh-transition-fast);
+    }
+
+    .bottom-nav-icon {
+      font-size: 14px;
+    }
+
+    .bottom-nav-btn.active {
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), rgba(22, 163, 74, 0.35));
+      color: #f9fafb;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+      transform: translateY(-1px);
+    }
+
+    @media (min-width: 900px) {
+      .bottom-nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="mlh-root">
+  <header class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <div class="logo-text-main">
+          <div class="logo-line-top">Moneyline Hacks</div>
+          <div class="logo-line-bottom">1Q Sheets · Week 13</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="meta-pill">
+          <span class="meta-dot"></span>
+          <span class="meta-strong">1Q edges live</span>
+        </div>
+        <div class="meta-pill">
+          🧮 <span>Odds focus: +350 to −160</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="tabs" id="tabs">
+        <button type="button" class="tab active" data-sheet="pass">
+          <span class="tab-icon">📡</span> PASS
+        </button>
+        <button type="button" class="tab" data-sheet="rush">
+          <span class="tab-icon">🚀</span> RUSH
+        </button>
+        <button type="button" class="tab" data-sheet="rec">
+          <span class="tab-icon">🎯</span> REC
+        </button>
+      </div>
+      <div class="header-sub">
+        Mobile: tap a card to expand metrics, swipe the stat strip. Desktop: full table view with Avg 1Q Yds and 1Q Line.
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- PASS PANEL -->
+    <section class="panel active" id="panel-pass" data-sheet-panel="pass">
+      <div class="panel-header">
+        <div class="panel-title-block">
+          <div class="panel-title">
+            PASS 1Q — Over Yardage Angles
+            <span>Function: 1Q Over Passing Yards</span>
+          </div>
+          <div class="panel-tagline">
+            Spot QBs whose 1Q passing (Adj EPA/play, success, explosives) beats both their line and the defense they face.
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" id="btn-pass-csv" class="btn btn-primary">
+            <span class="btn-icon">⬇️</span> PASS CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-main">
+          <div class="search-wrap">
+            <div class="search-inner">
+              <span class="search-icon">🔍</span>
+              <input id="search-pass" class="search-input" type="text" placeholder="Filter by team / QB / opponent / grade / line..." />
+            </div>
+          </div>
+          <div class="grade-filters" data-sheet-filters="pass">
+            <button type="button" class="filter-pill" data-grade-filter="A">
+              🟢 A-tier OVER edges
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="BPLUS">
+              🔵 A / B range
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="RESET">
+              ✖️ Clear
+            </button>
+          </div>
+        </div>
+        <div class="toolbar-note">
+          Use this to shortlist 1Q passing overs: compare Avg 1Q Yds vs the Line and the defense score.
+        </div>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="table-wrapper">
+        <table id="table-pass" data-grade-col="12" data-just-col="13">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>QB Player</th>
+              <th>Opponent</th>
+              <th>Adj EPA/play</th>
+              <th>Success%</th>
+              <th>Explosive%</th>
+              <th>Pass Rate Neutral%</th>
+              <th>aDOT</th>
+              <th>Avg 1Q Yds</th>
+              <th>1Q Line</th>
+              <th>Def 1Q Pass</th>
+              <th>Grade</th>
+              <th>Justification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>GB</td><td>J.Love</td><td>DET</td><td>0.5</td><td>72.2%</td><td>5.6%</td><td>51.4%</td><td>4.9</td><td>30.5</td><td>33.6</td><td>0.0</td><td><span class='badge badge-elite'>A+</span></td><td>J.Love and GB have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 4.9. The matchup vs DET grades as a 0/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 30.5 vs a modeled line 33.6 — attack this 1Q OVER when price is fair.</td></tr>
+<tr><td>KC</td><td>P.Mahomes</td><td>DAL</td><td>-1.0</td><td>18.2%</td><td>9.1%</td><td>73.3%</td><td>14.5</td><td>14.7</td><td>15.2</td><td>31.4</td><td><span class='badge badge-volatile'>F</span></td><td>P.Mahomes and KC have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 14.5. The matchup vs DAL grades as a 31/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 14.7 vs a modeled line 15.2 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>CIN</td><td>J.Flacco</td><td>BAL</td><td>0.1</td><td>50.0%</td><td>0.0%</td><td>47.4%</td><td>6.6</td><td>33.3</td><td>36.0</td><td>10.2</td><td><span class='badge badge-volatile'>F</span></td><td>J.Flacco and CIN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.6. The matchup vs BAL grades as a 10/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 33.3 vs a modeled line 36.0 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>CHI</td><td>C.Williams</td><td>PHI</td><td>0.1</td><td>48.5%</td><td>3.0%</td><td>55.0%</td><td>8.0</td><td>34.8</td><td>33.5</td><td>69.4</td><td><span class='badge badge-volatile'>F</span></td><td>C.Williams and CHI have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 8.0. The matchup vs PHI grades as a 69/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 34.8 vs a modeled line 33.5 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>SF</td><td>B.Purdy</td><td>CLE</td><td>0.2</td><td>41.7%</td><td>0.0%</td><td>52.2%</td><td>5.2</td><td>21.0</td><td>20.8</td><td>54.1</td><td><span class='badge badge-volatile'>F</span></td><td>B.Purdy and SF have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 5.2. The matchup vs CLE grades as a 54/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 21.0 vs a modeled line 20.8 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>JAX</td><td>T.Lawrence</td><td>TEN</td><td>0.2</td><td>43.5%</td><td>4.3%</td><td>48.9%</td><td>7.6</td><td>37.5</td><td>37.0</td><td>56.4</td><td><span class='badge badge-volatile'>F</span></td><td>T.Lawrence and JAX have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 7.6. The matchup vs TEN grades as a 56/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 37.5 vs a modeled line 37.0 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>HOU</td><td>C.Stroud</td><td>IND</td><td>0.0</td><td>46.3%</td><td>7.3%</td><td>66.1%</td><td>6.8</td><td>47.4</td><td>42.7</td><td>100.0</td><td><span class='badge badge-volatile'>F</span></td><td>C.Stroud and HOU have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.8. The matchup vs IND grades as a 99/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 47.4 vs a modeled line 42.7 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>NO</td><td>S.Rattler</td><td>MIA</td><td>-0.4</td><td>33.3%</td><td>0.0%</td><td>60.0%</td><td>1.7</td><td>22.3</td><td>24.3</td><td>6.7</td><td><span class='badge badge-volatile'>F</span></td><td>S.Rattler and NO have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 1.7. The matchup vs MIA grades as a 6/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 22.3 vs a modeled line 24.3 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>ATL</td><td>M.Penix</td><td>NYG</td><td>-1.2</td><td>15.4%</td><td>0.0%</td><td>54.2%</td><td>5.4</td><td>0.0</td><td>0.0</td><td>33.6</td><td><span class='badge badge-volatile'>F</span></td><td>M.Penix and ATL have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 5.4. The matchup vs NYG grades as a 33/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 0.0 vs a modeled line 0.0 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>ARI</td><td>J.Brissett</td><td>TB</td><td>0.2</td><td>43.8%</td><td>0.0%</td><td>66.7%</td><td>6.2</td><td>31.5</td><td>32.0</td><td>42.4</td><td><span class='badge badge-volatile'>F</span></td><td>J.Brissett and ARI have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.2. The matchup vs TB grades as a 42/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 31.5 vs a modeled line 32.0 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>MIN</td><td>J.McCarthy</td><td>SEA</td><td>0.2</td><td>46.2%</td><td>7.7%</td><td>57.8%</td><td>8.0</td><td>39.0</td><td>38.6</td><td>54.8</td><td><span class='badge badge-highrisk'>D</span></td><td>J.McCarthy and MIN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 8.0. The matchup vs SEA grades as a 54/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 39.0 vs a modeled line 38.6 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>BUF</td><td>J.Allen</td><td>PIT</td><td>0.0</td><td>37.5%</td><td>6.2%</td><td>58.2%</td><td>4.0</td><td>29.0</td><td>30.7</td><td>20.8</td><td><span class='badge badge-highrisk'>D</span></td><td>J.Allen and BUF have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 4.0. The matchup vs PIT grades as a 20/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 29.0 vs a modeled line 30.7 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>LV</td><td>G.Smith</td><td>LAC</td><td>-0.2</td><td>37.9%</td><td>3.4%</td><td>70.7%</td><td>3.9</td><td>30.2</td><td>30.7</td><td>43.1</td><td><span class='badge badge-volatile'>F</span></td><td>G.Smith and LV have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 3.9. The matchup vs LAC grades as a 43/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 30.2 vs a modeled line 30.7 — lean UNDER or fade at short prices.</td></tr>
+<tr><td>DEN</td><td>B.Nix</td><td>WAS</td><td>-0.2</td><td>42.1%</td><td>10.5%</td><td>54.3%</td><td>9.6</td><td>28.0</td><td>30.6</td><td>4.1</td><td><span class='badge badge-steady'>C</span></td><td>B.Nix and DEN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 9.6. The matchup vs WAS grades as a 4/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 28.0 vs a modeled line 30.6 — there’s a moderate edge if the number is reachable.</td></tr>
+<tr><td>NYJ</td><td>J.Fields</td><td>NE</td><td>0.1</td><td>54.5%</td><td>0.0%</td><td>33.3%</td><td>3.9</td><td>19.7</td><td>21.3</td><td>8.4</td><td><span class='badge badge-volatile'>F</span></td><td>J.Fields and NYJ have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 3.9. The matchup vs NE grades as a 8/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 19.7 vs a modeled line 21.3 — lean UNDER or fade at short prices.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile accordion list -->
+      <div class="mobile-list" id="mobile-pass-list"></div>
+
+      <div class="panel-footer">
+        <div>PASS sheet: best for isolating 1Q passing overs before checking price, news, and correlation angles.</div>
+        <div id="last-updated-pass">Last updated: Nov 27, 2025</div>
+      </div>
+    </section>
+
+    <!-- RUSH PANEL -->
+    <section class="panel" id="panel-rush" data-sheet-panel="rush">
+      <div class="panel-header">
+        <div class="panel-title-block">
+          <div class="panel-title">
+            RUSH 1Q — Over Yardage Angles
+            <span>Function: 1Q Over Rushing Yards</span>
+          </div>
+          <div class="panel-tagline">
+            Focus on backs with secure 1Q work, good Adj EPA/play, and soft early down run defenses.
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" id="btn-rush-csv" class="btn btn-primary">
+            <span class="btn-icon">⬇️</span> RUSH CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-main">
+          <div class="search-wrap">
+            <div class="search-inner">
+              <span class="search-icon">🔍</span>
+              <input id="search-rush" class="search-input" type="text" placeholder="Filter by team / RB / opponent / grade / line..." />
+            </div>
+          </div>
+          <div class="grade-filters" data-sheet-filters="rush">
+            <button type="button" class="filter-pill" data-grade-filter="A">
+              🟢 A-tier OVER edges
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="BPLUS">
+              🔵 A / B range
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="RESET">
+              ✖️ Clear
+            </button>
+          </div>
+        </div>
+        <div class="toolbar-note">
+          Combine Avg 1Q Yds + carries with the defense score for early-script rushing overs.
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="table-rush" data-grade-col="13" data-just-col="14">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>Player</th>
+              <th>Position</th>
+              <th>Opponent</th>
+              <th>Adj EPA/play</th>
+              <th>Success%</th>
+              <th>Explosive%</th>
+              <th>YAC/att</th>
+              <th>Carries</th>
+              <th>Avg 1Q Yds</th>
+              <th>1Q Line</th>
+              <th>Def 1Q Rush</th>
+              <th>Grade</th>
+              <th>Justification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>GB</td><td>J.Jacobs</td><td>RB</td><td>DET</td><td>-0.3</td><td>41.2%</td><td>5.9%</td><td>4.0</td><td>17.0</td><td>17.0</td><td>17.0</td><td>49.9</td><td><span class='badge badge-volatile'>F</span></td><td>J.Jacobs drives GB's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 49/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.0 vs a modeled line 17.0 — better left alone or shaded UNDER.</td></tr>
+<tr><td>KC</td><td>K.Hunt</td><td>RB</td><td>DAL</td><td>0.3</td><td>25.0%</td><td>0.0%</td><td>3.0</td><td>4.0</td><td>6.0</td><td>6.0</td><td>50.3</td><td><span class='badge badge-volatile'>F</span></td><td>K.Hunt drives KC's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 50/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 6.0 vs a modeled line 6.0 — better left alone or shaded UNDER.</td></tr>
+<tr><td>CIN</td><td>C.Brown</td><td>RB</td><td>BAL</td><td>0.1</td><td>50.0%</td><td>10.0%</td><td>5.5</td><td>20.0</td><td>27.8</td><td>28.1</td><td>43.1</td><td><span class='badge badge-steady'>C</span></td><td>C.Brown drives CIN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 43/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 27.8 vs a modeled line 28.1 — edge is script‑dependent; look for neutral game states.</td></tr>
+<tr><td>CHI</td><td>K.Monangai</td><td>RB</td><td>PHI</td><td>-0.1</td><td>40.7%</td><td>7.4%</td><td>4.3</td><td>27.0</td><td>23.0</td><td>22.3</td><td>65.6</td><td><span class='badge badge-volatile'>F</span></td><td>K.Monangai drives CHI's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 65/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 23.0 vs a modeled line 22.3 — better left alone or shaded UNDER.</td></tr>
+<tr><td>SF</td><td>C.McCaffrey</td><td>RB</td><td>CLE</td><td>0.2</td><td>63.6%</td><td>0.0%</td><td>3.6</td><td>11.0</td><td>13.3</td><td>13.7</td><td>36.5</td><td><span class='badge badge-highrisk'>D</span></td><td>C.McCaffrey drives SF's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 36/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 13.3 vs a modeled line 13.7 — better left alone or shaded UNDER.</td></tr>
+<tr><td>JAX</td><td>T.Etienne</td><td>RB</td><td>TEN</td><td>0.1</td><td>37.5%</td><td>4.2%</td><td>5.2</td><td>24.0</td><td>31.2</td><td>33.1</td><td>21.1</td><td><span class='badge badge-highrisk'>D</span></td><td>T.Etienne drives JAX's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 21/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 31.2 vs a modeled line 33.1 — better left alone or shaded UNDER.</td></tr>
+<tr><td>HOU</td><td>W.Marks</td><td>RB</td><td>IND</td><td>-0.3</td><td>33.3%</td><td>0.0%</td><td>2.9</td><td>21.0</td><td>15.2</td><td>15.3</td><td>48.1</td><td><span class='badge badge-volatile'>F</span></td><td>W.Marks drives HOU's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 48/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 15.2 vs a modeled line 15.3 — better left alone or shaded UNDER.</td></tr>
+<tr><td>NO</td><td>A.Kamara</td><td>RB</td><td>MIA</td><td>-0.7</td><td>25.0%</td><td>0.0%</td><td>2.1</td><td>12.0</td><td>8.3</td><td>7.5</td><td>100.0</td><td><span class='badge badge-volatile'>F</span></td><td>A.Kamara drives NO's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 99/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 8.3 vs a modeled line 7.5 — better left alone or shaded UNDER.</td></tr>
+<tr><td>ATL</td><td>B.Robinson</td><td>RB</td><td>NYG</td><td>-0.4</td><td>18.2%</td><td>9.1%</td><td>2.9</td><td>11.0</td><td>8.0</td><td>8.8</td><td>2.5</td><td><span class='badge badge-volatile'>F</span></td><td>B.Robinson drives ATL's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 2/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 8.0 vs a modeled line 8.8 — better left alone or shaded UNDER.</td></tr>
+<tr><td>ARI</td><td>Z.Knight</td><td>RB</td><td>TB</td><td>-0.4</td><td>25.0%</td><td>0.0%</td><td>2.4</td><td>8.0</td><td>9.5</td><td>9.4</td><td>56.2</td><td><span class='badge badge-volatile'>F</span></td><td>Z.Knight drives ARI's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 56/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 9.5 vs a modeled line 9.4 — better left alone or shaded UNDER.</td></tr>
+<tr><td>MIN</td><td>A.Jones</td><td>RB</td><td>SEA</td><td>0.0</td><td>47.4%</td><td>15.8%</td><td>4.7</td><td>19.0</td><td>17.8</td><td>18.5</td><td>29.4</td><td><span class='badge badge-steady'>C</span></td><td>A.Jones drives MIN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 29/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.8 vs a modeled line 18.5 — edge is script‑dependent; look for neutral game states.</td></tr>
+<tr><td>BUF</td><td>J.Cook</td><td>RB</td><td>PIT</td><td>0.5</td><td>60.9%</td><td>17.4%</td><td>7.3</td><td>23.0</td><td>33.6</td><td>34.1</td><td>42.4</td><td><span class='badge badge-elite'>A+</span></td><td>J.Cook drives BUF's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 42/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 33.6 vs a modeled line 34.1 — attack this 1Q OVER when price is fair.</td></tr>
+<tr><td>LV</td><td>A.Jeanty</td><td>RB</td><td>LAC</td><td>0.1</td><td>41.7%</td><td>8.3%</td><td>4.1</td><td>12.0</td><td>12.2</td><td>12.0</td><td>59.1</td><td><span class='badge badge-volatile'>F</span></td><td>A.Jeanty drives LV's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 59/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 12.2 vs a modeled line 12.0 — better left alone or shaded UNDER.</td></tr>
+<tr><td>DEN</td><td>J.Dobbins</td><td>RB</td><td>WAS</td><td>0.1</td><td>50.0%</td><td>12.5%</td><td>6.1</td><td>16.0</td><td>24.2</td><td>26.7</td><td>0.0</td><td><span class='badge badge-edge'>B</span></td><td>J.Dobbins drives DEN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 0/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 24.2 vs a modeled line 26.7 — edge is script‑dependent; look for neutral game states.</td></tr>
+<tr><td>NYJ</td><td>B.Hall</td><td>RB</td><td>NE</td><td>-0.3</td><td>31.8%</td><td>0.0%</td><td>3.1</td><td>22.0</td><td>17.2</td><td>18.1</td><td>26.2</td><td><span class='badge badge-volatile'>F</span></td><td>B.Hall drives NYJ's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 26/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.2 vs a modeled line 18.1 — better left alone or shaded UNDER.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mobile-list" id="mobile-rush-list"></div>
+
+      <div class="panel-footer">
+        <div>RUSH sheet: perfect for finding 1Q ground game overs and fading weak early-game fronts.</div>
+        <div id="last-updated-rush">Last updated: Nov 27, 2025</div>
+      </div>
+    </section>
+
+    <!-- REC PANEL -->
+    <section class="panel" id="panel-rec" data-sheet-panel="rec">
+      <div class="panel-header">
+        <div class="panel-title-block">
+          <div class="panel-title">
+            REC 1Q — Over Yardage Angles
+            <span>Function: 1Q Over Receiving Yards</span>
+          </div>
+          <div class="panel-tagline">
+            Surfacing 1Q target earners (YPRR / TPRR) vs coverage shells that leak chunk gains early.
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button type="button" id="btn-rec-csv" class="btn btn-primary">
+            <span class="btn-icon">⬇️</span> REC CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-main">
+          <div class="search-wrap">
+            <div class="search-inner">
+              <span class="search-icon">🔍</span>
+              <input id="search-rec" class="search-input" type="text" placeholder="Filter by WR/TE / team / opponent / grade / line..." />
+            </div>
+          </div>
+          <div class="grade-filters" data-sheet-filters="rec">
+            <button type="button" class="filter-pill" data-grade-filter="A">
+              🟢 A-tier OVER edges
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="BPLUS">
+              🔵 A / B range
+            </button>
+            <button type="button" class="filter-pill" data-grade-filter="RESET">
+              ✖️ Clear
+            </button>
+          </div>
+        </div>
+        <div class="toolbar-note">
+          REC sheet: look for strong YPRR / TPRR plus soft Def 1Q Pass and a line that lags behind the average.
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="table-rec" data-grade-col="14" data-just-col="15">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Team</th>
+              <th>Position</th>
+              <th>Opponent</th>
+              <th>YPRR</th>
+              <th>TPRR</th>
+              <th>Explosive%</th>
+              <th>aDOT</th>
+              <th>Catch% vs Exp</th>
+              <th>Avg 1Q Yds</th>
+              <th>1Q Line</th>
+              <th>Def 1Q Pass</th>
+              <th>Grade</th>
+              <th>Justification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>R.Doubs</td><td>GB</td><td>WR</td><td>DET</td><td>8.8</td><td>22.2%</td><td>33.3%</td><td>8.2</td><td>15.0</td><td>17.5</td><td>19.2</td><td>0.0</td><td><span class='badge badge-steady'>C</span></td><td>R.Doubs is GB's primary 1Q read with strong target share and aDOT around 8.2. Catch rate vs expectation sits at 15.0 pts and explosive grabs show up 33.3% of the time. Against a 0/100 pass defense, average 1Q yards 17.5 vs a modeled line 19.2 — consider at good numbers; volume can wobble.</td></tr>
+<tr><td>X.Worthy</td><td>KC</td><td>WR</td><td>DAL</td><td>9.0</td><td>27.3%</td><td>100.0%</td><td>29.3</td><td>-26.7</td><td>27.0</td><td>28.0</td><td>31.4</td><td><span class='badge badge-elite'>A+</span></td><td>X.Worthy is KC's primary 1Q read with strong target share and aDOT around 29.3. Catch rate vs expectation sits at -26.7 pts and explosive grabs show up 100.0% of the time. Against a 31/100 pass defense, average 1Q yards 27.0 vs a modeled line 28.0 — attack this 1Q OVER when price is fair.</td></tr>
+<tr><td>J.Chase</td><td>CIN</td><td>WR</td><td>BAL</td><td>3.8</td><td>22.2%</td><td>0.0%</td><td>4.8</td><td>-10.0</td><td>15.0</td><td>16.2</td><td>10.2</td><td><span class='badge badge-volatile'>F</span></td><td>J.Chase is CIN's primary 1Q read with strong target share and aDOT around 4.8. Catch rate vs expectation sits at -10.0 pts and explosive grabs show up 0.0% of the time. Against a 10/100 pass defense, average 1Q yards 15.0 vs a modeled line 16.2 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>R.Odunze</td><td>CHI</td><td>WR</td><td>PHI</td><td>12.0</td><td>25.8%</td><td>14.3%</td><td>12.5</td><td>27.5</td><td>48.0</td><td>46.1</td><td>69.4</td><td><span class='badge badge-steady'>C−</span></td><td>R.Odunze is CHI's primary 1Q read with strong target share and aDOT around 12.5. Catch rate vs expectation sits at 27.5 pts and explosive grabs show up 14.3% of the time. Against a 69/100 pass defense, average 1Q yards 48.0 vs a modeled line 46.1 — consider at good numbers; volume can wobble.</td></tr>
+<tr><td>C.McCaffrey</td><td>SF</td><td>WR</td><td>CLE</td><td>3.0</td><td>33.3%</td><td>0.0%</td><td>1.8</td><td>15.0</td><td>12.0</td><td>11.9</td><td>54.1</td><td><span class='badge badge-volatile'>F</span></td><td>C.McCaffrey is SF's primary 1Q read with strong target share and aDOT around 1.8. Catch rate vs expectation sits at 15.0 pts and explosive grabs show up 0.0% of the time. Against a 54/100 pass defense, average 1Q yards 12.0 vs a modeled line 11.9 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>P.Washington</td><td>JAX</td><td>WR</td><td>TEN</td><td>5.4</td><td>21.7%</td><td>0.0%</td><td>5.0</td><td>20.0</td><td>9.0</td><td>8.9</td><td>56.4</td><td><span class='badge badge-volatile'>F</span></td><td>P.Washington is JAX's primary 1Q read with strong target share and aDOT around 5.0. Catch rate vs expectation sits at 20.0 pts and explosive grabs show up 0.0% of the time. Against a 56/100 pass defense, average 1Q yards 9.0 vs a modeled line 8.9 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>C.Kirk</td><td>HOU</td><td>WR</td><td>IND</td><td>3.0</td><td>17.1%</td><td>0.0%</td><td>4.0</td><td>-17.1</td><td>10.5</td><td>9.5</td><td>100.0</td><td><span class='badge badge-volatile'>F</span></td><td>C.Kirk is HOU's primary 1Q read with strong target share and aDOT around 4.0. Catch rate vs expectation sits at -17.1 pts and explosive grabs show up 0.0% of the time. Against a 99/100 pass defense, average 1Q yards 10.5 vs a modeled line 9.5 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>C.Olave</td><td>NO</td><td>WR</td><td>MIA</td><td>5.3</td><td>16.7%</td><td>0.0%</td><td>1.7</td><td>40.0</td><td>8.0</td><td>8.7</td><td>6.7</td><td><span class='badge badge-volatile'>F</span></td><td>C.Olave is NO's primary 1Q read with strong target share and aDOT around 1.7. Catch rate vs expectation sits at 40.0 pts and explosive grabs show up 0.0% of the time. Against a 6/100 pass defense, average 1Q yards 8.0 vs a modeled line 8.7 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>D.Mooney</td><td>ATL</td><td>WR</td><td>NYG</td><td>6.0</td><td>23.1%</td><td>0.0%</td><td>14.7</td><td>6.7</td><td>9.0</td><td>9.3</td><td>33.6</td><td><span class='badge badge-volatile'>F</span></td><td>D.Mooney is ATL's primary 1Q read with strong target share and aDOT around 14.7. Catch rate vs expectation sits at 6.7 pts and explosive grabs show up 0.0% of the time. Against a 33/100 pass defense, average 1Q yards 9.0 vs a modeled line 9.3 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>M.Harrison</td><td>ARI</td><td>WR</td><td>TB</td><td>8.2</td><td>25.0%</td><td>0.0%</td><td>12.8</td><td>-10.0</td><td>33.0</td><td>33.5</td><td>42.4</td><td><span class='badge badge-volatile'>F</span></td><td>M.Harrison is ARI's primary 1Q read with strong target share and aDOT around 12.8. Catch rate vs expectation sits at -10.0 pts and explosive grabs show up 0.0% of the time. Against a 42/100 pass defense, average 1Q yards 33.0 vs a modeled line 33.5 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>A.Jones</td><td>MIN</td><td>WR</td><td>SEA</td><td>1.9</td><td>26.9%</td><td>0.0%</td><td>1.1</td><td>-17.1</td><td>4.3</td><td>4.3</td><td>54.8</td><td><span class='badge badge-volatile'>F</span></td><td>A.Jones is MIN's primary 1Q read with strong target share and aDOT around 1.1. Catch rate vs expectation sits at -17.1 pts and explosive grabs show up 0.0% of the time. Against a 54/100 pass defense, average 1Q yards 4.3 vs a modeled line 4.3 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>K.Shakir</td><td>BUF</td><td>WR</td><td>PIT</td><td>4.6</td><td>21.9%</td><td>0.0%</td><td>-1.4</td><td>40.0</td><td>10.7</td><td>11.3</td><td>20.8</td><td><span class='badge badge-volatile'>F</span></td><td>K.Shakir is BUF's primary 1Q read with strong target share and aDOT around -1.4. Catch rate vs expectation sits at 40.0 pts and explosive grabs show up 0.0% of the time. Against a 20/100 pass defense, average 1Q yards 10.7 vs a modeled line 11.3 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>T.Tucker</td><td>LV</td><td>WR</td><td>LAC</td><td>-0.2</td><td>17.2%</td><td>0.0%</td><td>11.8</td><td>-20.0</td><td>-0.5</td><td>0.0</td><td>43.1</td><td><span class='badge badge-volatile'>F</span></td><td>T.Tucker is LV's primary 1Q read with strong target share and aDOT around 11.8. Catch rate vs expectation sits at -20.0 pts and explosive grabs show up 0.0% of the time. Against a 43/100 pass defense, average 1Q yards -0.5 vs a modeled line 0.0 — likely an UNDER/fade unless price is generous.</td></tr>
+<tr><td>T.Franklin</td><td>DEN</td><td>WR</td><td>WAS</td><td>7.0</td><td>26.3%</td><td>50.0%</td><td>24.4</td><td>-20.0</td><td>17.5</td><td>19.1</td><td>4.1</td><td><span class='badge badge-edge'>B</span></td><td>T.Franklin is DEN's primary 1Q read with strong target share and aDOT around 24.4. Catch rate vs expectation sits at -20.0 pts and explosive grabs show up 50.0% of the time. Against a 4/100 pass defense, average 1Q yards 17.5 vs a modeled line 19.1 — consider at good numbers; volume can wobble.</td></tr>
+<tr><td>A.Mitchell</td><td>NYJ</td><td>WR</td><td>NE</td><td>8.7</td><td>27.3%</td><td>0.0%</td><td>14.3</td><td>6.7</td><td>13.0</td><td>14.1</td><td>8.4</td><td><span class='badge badge-steady'>C+</span></td><td>A.Mitchell is NYJ's primary 1Q read with strong target share and aDOT around 14.3. Catch rate vs expectation sits at 6.7 pts and explosive grabs show up 0.0% of the time. Against a 8/100 pass defense, average 1Q yards 13.0 vs a modeled line 14.1 — consider at good numbers; volume can wobble.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mobile-list" id="mobile-rec-list"></div>
+
+      <div class="panel-footer">
+        <div>REC sheet: primary tool for WR/TE 1Q overs and spotting fragile coverage shells early in games.</div>
+        <div id="last-updated-rec">Last updated: Nov 27, 2025</div>
+      </div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section class="glossary" id="glossary">
+      <div class="glossary-title">Stat Glossary</div>
+      <div class="glossary-grid">
+        <div>
+          <div><span class="glossary-label">Adj EPA/play</span> – 1Q EPA per play adjusted for opponent strength.</div>
+          <div><span class="glossary-label">Success%</span> – % of 1Q plays that keep the offense on schedule.</div>
+          <div><span class="glossary-label">Explosive%</span> – % of 1Q plays gaining chunk yardage (15+ pass, 10+ rush).</div>
+          <div><span class="glossary-label">Pass Rate Neutral%</span> – 1Q pass rate when score is within three points.</div>
+          <div><span class="glossary-label">aDOT</span> – average depth of target in 1Q.</div>
+          <div><span class="glossary-label">Avg 1Q Yds</span> – average yards gained in 1Q for this stat type across the sample.</div>
+          <div><span class="glossary-label">1Q Line</span> – current or modeled betting line for 1Q yards.</div>
+        </div>
+        <div>
+          <div><span class="glossary-label">YAC/att</span> – yards after contact per rush attempt.</div>
+          <div><span class="glossary-label">Carries</span> – average 1Q rushing attempts.</div>
+          <div><span class="glossary-label">YPRR</span> – yards per route run in 1Q.</div>
+          <div><span class="glossary-label">TPRR</span> – targets per route run in 1Q.</div>
+          <div><span class="glossary-label">Catch% vs Exp</span> – catch rate compared to expectation.</div>
+          <div><span class="glossary-label">Defense metrics</span> – 0–100 difficulty score for Pass/Rush; higher = tougher.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div class="glossary-title">Grade & Color Guide</div>
+        <div>
+          <span class="glossary-label">A+ / A / A− — ELITE (Green)</span>: top stability, volume, and matchup edge. These are your highest-confidence 1Q OVERs when price is fair.<br />
+          <span class="glossary-label">B+ / B / B− — EDGE (Blue)</span>: strong metrics or matchup with slightly higher variance. Very live 1Q OVER opportunities.<br />
+          <span class="glossary-label">C+ / C / C− — STEADY (Yellow)</span>: middle-tier consistency. Script-dependent, moderate-value edges; better with friendly prices or correlation.<br />
+          <span class="glossary-label">D — HIGH-RISK (Orange-Red)</span>: volatile roles or tough defenses. Limited reliability; most useful for 1Q UNDER leans or fades.<br />
+          <span class="glossary-label">F — VOLATILE (Red)</span>: weak efficiency and/or brutal matchup. These profiles mainly flag strong 1Q UNDER / fade angles rather than overs.
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- BOTTOM MOBILE NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button type="button" class="bottom-nav-btn active" data-sheet="pass">
+      <span class="bottom-nav-icon">📡</span>
+      <span>PASS</span>
+    </button>
+    <button type="button" class="bottom-nav-btn" data-sheet="rush">
+      <span class="bottom-nav-icon">🚀</span>
+      <span>RUSH</span>
+    </button>
+    <button type="button" class="bottom-nav-btn" data-sheet="rec">
+      <span class="bottom-nav-icon">🎯</span>
+      <span>REC</span>
+    </button>
+    <button type="button" class="bottom-nav-btn" data-scroll-target="glossary">
+      <span class="bottom-nav-icon">📘</span>
+      <span>Glossary</span>
+    </button>
+  </div>
+</nav>
+
+<!-- CSV DATA CONTAINERS (to be filled by the agent) -->
+<script id="data-pass-csv" type="text/plain" style="display:none">team,qb_player,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,pass_rate_neutral_1q,adot_1q,avg_1q_yards,market_line_1q,Defense_1Q_Pass,MLH_Grade,Letter,LetterBadge,justification
+GB,J.Love,DET,Last 5 games (Weeks 8–12),4,0.5219969915294009,72.22222222222221,5.555555555555555,51.42857142857142,4.888888888888889,30.5,33.550000000000004,0.0,99.99999996768986,A+,badge-elite,"J.Love and GB have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 4.9. The matchup vs DET grades as a 0/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 30.5 vs a modeled line 33.6 — attack this 1Q OVER when price is fair."
+KC,P.Mahomes,DAL,Last 5 games (Weeks 8–12),3,-1.009672997503499,18.181818181818183,9.090909090909092,73.33333333333333,14.545454545454545,14.666666666666666,15.212232789487642,31.401154903830435,38.15764622268695,F,badge-volatile,"P.Mahomes and KC have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 14.5. The matchup vs DAL grades as a 31/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 14.7 vs a modeled line 15.2 — lean UNDER or fade at short prices."
+CIN,J.Flacco,BAL,Last 5 games (Weeks 8–12),3,0.07368937439267424,50.0,0.0,47.368421052631575,6.555555555555555,33.333333333333336,35.9889184350442,10.166223474337082,58.55028737213844,F,badge-volatile,"J.Flacco and CIN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.6. The matchup vs BAL grades as a 10/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 33.3 vs a modeled line 36.0 — lean UNDER or fade at short prices."
+CHI,C.Williams,PHI,Last 5 games (Weeks 8–12),5,0.13541383334373616,48.484848484848484,3.0303030303030303,55.00000000000001,8.030303030303031,34.8,33.45182140180353,69.37038215799525,49.123372740523166,F,badge-volatile,"C.Williams and CHI have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 8.0. The matchup vs PHI grades as a 69/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 34.8 vs a modeled line 33.5 — lean UNDER or fade at short prices."
+SF,B.Purdy,CLE,Last 5 games (Weeks 8–12),3,0.1556444696616388,41.66666666666667,0.0,52.17391304347826,5.166666666666667,21.0,20.828024968961525,54.09464359615418,43.60532406678265,F,badge-volatile,"B.Purdy and SF have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 5.2. The matchup vs CLE grades as a 54/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 21.0 vs a modeled line 20.8 — lean UNDER or fade at short prices."
+JAX,T.Lawrence,TEN,Last 5 games (Weeks 8–12),4,0.23934376928904638,43.47826086956522,4.3478260869565215,48.93617021276596,7.565217391304348,37.5,37.01760912734404,56.43187830207952,54.08797018456172,F,badge-volatile,"T.Lawrence and JAX have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 7.6. The matchup vs TEN grades as a 56/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 37.5 vs a modeled line 37.0 — lean UNDER or fade at short prices."
+HOU,C.Stroud,IND,Last 5 games (Weeks 8–12),5,0.0022119158474010023,46.34146341463415,7.317073170731707,66.12903225806451,6.829268292682927,47.4,42.660000003175085,99.99999996650756,48.56073198631927,F,badge-volatile,"C.Stroud and HOU have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.8. The matchup vs IND grades as a 99/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 47.4 vs a modeled line 42.7 — lean UNDER or fade at short prices."
+NO,S.Rattler,MIA,Last 5 games (Weeks 8–12),3,-0.41651445491179623,33.33333333333333,0.0,60.0,1.6666666666666667,22.333333333333332,24.26878874213565,6.668908758156967,44.127718488115796,F,badge-volatile,"S.Rattler and NO have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 1.7. The matchup vs MIA grades as a 6/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 22.3 vs a modeled line 24.3 — lean UNDER or fade at short prices."
+ATL,M.Penix,NYG,Last 5 games (Weeks 8–12),5,-1.2331958812330772,15.384615384615385,0.0,54.166666666666664,5.384615384615385,0.0,0.0,33.58667996279501,0.0,F,badge-volatile,"M.Penix and ATL have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 5.4. The matchup vs NYG grades as a 33/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 0.0 vs a modeled line 0.0 — lean UNDER or fade at short prices."
+ARI,J.Brissett,TB,Last 5 games (Weeks 8–12),2,0.22013670806635993,43.75,0.0,66.66666666666666,6.25,31.5,31.977274205827847,42.42421895511356,57.751873304569266,F,badge-volatile,"J.Brissett and ARI have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 6.2. The matchup vs TB grades as a 42/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 31.5 vs a modeled line 32.0 — lean UNDER or fade at short prices."
+MIN,J.McCarthy,SEA,Last 5 games (Weeks 8–12),5,0.2455381362582665,46.15384615384615,7.6923076923076925,57.77777777777777,7.961538461538462,39.0,38.62891017952085,54.75756180101479,67.99563142906717,D,badge-highrisk,"J.McCarthy and MIN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 8.0. The matchup vs SEA grades as a 54/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 39.0 vs a modeled line 38.6 — lean UNDER or fade at short prices."
+BUF,J.Allen,PIT,Last 5 games (Weeks 8–12),5,0.005984641697516099,37.5,6.25,58.18181818181818,3.96875,29.0,30.6950358926835,20.775243229594867,66.04454943319374,D,badge-highrisk,"J.Allen and BUF have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 4.0. The matchup vs PIT grades as a 20/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 29.0 vs a modeled line 30.7 — lean UNDER or fade at short prices."
+LV,G.Smith,LAC,Last 5 games (Weeks 8–12),4,-0.23424799958607836,37.93103448275862,3.4482758620689653,70.73170731707317,3.896551724137931,30.25,30.664594223466,43.14720291791733,51.587632640244806,F,badge-volatile,"G.Smith and LV have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 3.9. The matchup vs LAC grades as a 43/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 30.2 vs a modeled line 30.7 — lean UNDER or fade at short prices."
+DEN,B.Nix,WAS,Last 5 games (Weeks 8–12),3,-0.21524142511597147,42.10526315789473,10.526315789473683,54.285714285714285,9.578947368421053,28.0,30.570927453494235,4.090581187602981,75.58640547443855,C,badge-steady,"B.Nix and DEN have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 9.6. The matchup vs WAS grades as a 4/100 pass defense, so expect efficient volume. Average 1Q passing yards sits at 28.0 vs a modeled line 30.6 — there’s a moderate edge if the number is reachable."
+NYJ,J.Fields,NE,Last 5 games (Weeks 8–12),3,0.11050128677478832,54.54545454545454,0.0,33.33333333333333,3.909090909090909,19.666666666666668,21.302719893779543,8.40542642933372,55.47457884753645,F,badge-volatile,"J.Fields and NYJ have shown solid 1Q passing lately: EPA per play and success rate trend up with an aDOT around 3.9. The matchup vs NE grades as a 8/100 pass defense, so expect measured volume. Average 1Q passing yards sits at 19.7 vs a modeled line 21.3 — lean UNDER or fade at short prices."
+</script>
+<script id="data-rush-csv" type="text/plain" style="display:none">team,player,position,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,yac_per_att_1q,carries_1q,avg_1q_yards,market_line_1q,Defense_1Q_Rush,MLH_Grade,Letter,LetterBadge,justification
+GB,J.Jacobs,RB,DET,Last 5 games (Weeks 8–12),4,-0.25283027773291544,41.17647058823529,5.88235294117647,4.0,17,17.0,17.00246743869238,49.92742827375352,46.616839034579186,F,badge-volatile,"J.Jacobs drives GB's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 49/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.0 vs a modeled line 17.0 — better left alone or shaded UNDER."
+KC,K.Hunt,RB,DAL,Last 5 games (Weeks 8–12),2,0.26412283588433694,25.0,0.0,3.0,4,6.0,5.99684022094689,50.26331492109247,43.50806567587207,F,badge-volatile,"K.Hunt drives KC's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 50/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 6.0 vs a modeled line 6.0 — better left alone or shaded UNDER."
+CIN,C.Brown,RB,BAL,Last 5 games (Weeks 8–12),4,0.12827241375853798,50.0,10.0,5.55,20,27.75,28.135249719686932,43.05856360924452,72.35228019589485,C,badge-steady,"C.Brown drives CIN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 43/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 27.8 vs a modeled line 28.1 — edge is script‑dependent; look for neutral game states."
+CHI,K.Monangai,RB,PHI,Last 5 games (Weeks 8–12),5,-0.07670614678041907,40.74074074074074,7.4074074074074066,4.2592592592592595,27,23.0,22.28341633884184,65.57790567735135,51.82504072435496,F,badge-volatile,"K.Monangai drives CHI's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 65/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 23.0 vs a modeled line 22.3 — better left alone or shaded UNDER."
+SF,C.McCaffrey,RB,CLE,Last 5 games (Weeks 8–12),3,0.21546533945101187,63.63636363636363,0.0,3.6363636363636362,11,13.333333333333334,13.693488599288361,36.4941775266864,64.14946543668381,D,badge-highrisk,"C.McCaffrey drives SF's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 36/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 13.3 vs a modeled line 13.7 — better left alone or shaded UNDER."
+JAX,T.Etienne,RB,TEN,Last 5 games (Weeks 8–12),4,0.06955117896785006,37.5,4.166666666666666,5.208333333333333,24,31.25,33.05636388348048,21.098177864312305,65.03583708195909,D,badge-highrisk,"T.Etienne drives JAX's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 21/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 31.2 vs a modeled line 33.1 — better left alone or shaded UNDER."
+HOU,W.Marks,RB,IND,Last 5 games (Weeks 8–12),4,-0.25333317950117956,33.33333333333333,0.0,2.9047619047619047,21,15.25,15.307568663434346,48.11250283821815,35.41394030691003,F,badge-volatile,"W.Marks drives HOU's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 48/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 15.2 vs a modeled line 15.3 — better left alone or shaded UNDER."
+NO,A.Kamara,RB,MIA,Last 5 games (Weeks 8–12),3,-0.7442017680247469,25.0,0.0,2.0833333333333335,12,8.333333333333334,7.500000000497546,99.99999997014729,0.0,F,badge-volatile,"A.Kamara drives NO's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 99/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 8.3 vs a modeled line 7.5 — better left alone or shaded UNDER."
+ATL,B.Robinson,RB,NYG,Last 5 games (Weeks 8–12),4,-0.41751771528189185,18.181818181818183,9.090909090909092,2.909090909090909,11,8.0,8.760686407533838,2.457099529135187,44.59091505370186,F,badge-volatile,"B.Robinson drives ATL's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 2/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 8.0 vs a modeled line 8.8 — better left alone or shaded UNDER."
+ARI,Z.Knight,RB,TB,Last 5 games (Weeks 8–12),2,-0.438011979495059,25.0,0.0,2.375,8,9.5,9.383136156300449,56.150728615765885,20.538864817377743,F,badge-volatile,"Z.Knight drives ARI's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 56/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 9.5 vs a modeled line 9.4 — better left alone or shaded UNDER."
+MIN,A.Jones,RB,SEA,Last 5 games (Weeks 8–12),5,0.02414509414780953,47.368421052631575,15.789473684210526,4.684210526315789,19,17.8,18.531836424780316,29.442797056732704,75.6168090187962,C,badge-steady,"A.Jones drives MIN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 29/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.8 vs a modeled line 18.5 — edge is script‑dependent; look for neutral game states."
+BUF,J.Cook,RB,PIT,Last 5 games (Weeks 8–12),5,0.46288719546029605,60.86956521739131,17.391304347826086,7.304347826086956,23,33.6,34.10809521441712,42.439059309269155,99.99999997438006,A+,badge-elite,"J.Cook drives BUF's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 42/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 33.6 vs a modeled line 34.1 — attack this 1Q OVER when price is fair."
+LV,A.Jeanty,RB,LAC,Last 5 games (Weeks 8–12),4,0.06713883717020531,41.66666666666667,8.333333333333332,4.083333333333333,12,12.25,12.026059246767513,59.14043890744842,55.609446746162284,F,badge-volatile,"A.Jeanty drives LV's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 59/100, which shapes expectation for tough sledding. Average 1Q rushing sits at 12.2 vs a modeled line 12.0 — better left alone or shaded UNDER."
+DEN,J.Dobbins,RB,WAS,Last 5 games (Weeks 8–12),4,0.12164990672317808,50.0,12.5,6.0625,16,24.25,26.675,0.0,86.85863993675852,B,badge-edge,"J.Dobbins drives DEN's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 0/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 24.2 vs a modeled line 26.7 — edge is script‑dependent; look for neutral game states."
+NYJ,B.Hall,RB,NE,Last 5 games (Weeks 8–12),4,-0.25472919093127494,31.818181818181817,0.0,3.1363636363636362,22,17.25,18.072456709360914,26.16067509098799,41.41284442766029,F,badge-volatile,"B.Hall drives NYJ's early ground game with steady success and some chunk gains. The opponent’s rush defense grades 26/100, which shapes expectation for light boxes and lanes. Average 1Q rushing sits at 17.2 vs a modeled line 18.1 — better left alone or shaded UNDER."
+</script>
+<script id="data-rec-csv" type="text/plain" style="display:none">player,team,position,opponent,date_range,games_used,yprr_1q,tprr_1q,explosive_pct_1q,adot_1q,catch_pct_vs_exp_1q,avg_1q_yards,market_line_1q,Defense_1Q_Pass,MLH_Grade,Letter,LetterBadge,justification,estimated
+R.Doubs,GB,WR,DET,Last 5 games (Weeks 8–12),4,8.75,22.22222222222222,33.33333333333333,8.25,15.0,17.5,19.25,0.0,73.49555043074633,C,badge-steady,"R.Doubs is GB's primary 1Q read with strong target share and aDOT around 8.2. Catch rate vs expectation sits at 15.0 pts and explosive grabs show up 33.3% of the time. Against a 0/100 pass defense, average 1Q yards 17.5 vs a modeled line 19.2 — consider at good numbers; volume can wobble.",True
+X.Worthy,KC,WR,DAL,Last 5 games (Weeks 8–12),3,9.0,27.27272727272727,100.0,29.333333333333332,-26.66666666666667,27.0,28.00433763519316,31.401154903830435,99.9999999679758,A+,badge-elite,"X.Worthy is KC's primary 1Q read with strong target share and aDOT around 29.3. Catch rate vs expectation sits at -26.7 pts and explosive grabs show up 100.0% of the time. Against a 31/100 pass defense, average 1Q yards 27.0 vs a modeled line 28.0 — attack this 1Q OVER when price is fair.",True
+J.Chase,CIN,WR,BAL,Last 5 games (Weeks 8–12),3,3.75,22.22222222222222,0.0,4.75,-10.0,15.0,16.195013295769886,10.166223474337082,40.88857889807919,F,badge-volatile,"J.Chase is CIN's primary 1Q read with strong target share and aDOT around 4.8. Catch rate vs expectation sits at -10.0 pts and explosive grabs show up 0.0% of the time. Against a 10/100 pass defense, average 1Q yards 15.0 vs a modeled line 16.2 — likely an UNDER/fade unless price is generous.",True
+R.Odunze,CHI,WR,PHI,Last 5 games (Weeks 8–12),4,12.0,25.806451612903224,14.285714285714285,12.5,27.5,48.0,46.14044331283246,69.37038215799525,71.54740808774159,C−,badge-steady,"R.Odunze is CHI's primary 1Q read with strong target share and aDOT around 12.5. Catch rate vs expectation sits at 27.5 pts and explosive grabs show up 14.3% of the time. Against a 69/100 pass defense, average 1Q yards 48.0 vs a modeled line 46.1 — consider at good numbers; volume can wobble.",True
+C.McCaffrey,SF,WR,CLE,Last 5 games (Weeks 8–12),3,3.0,33.33333333333333,0.0,1.75,15.0,12.0,11.9017285536923,54.09464359615418,48.17906006996605,F,badge-volatile,"C.McCaffrey is SF's primary 1Q read with strong target share and aDOT around 1.8. Catch rate vs expectation sits at 15.0 pts and explosive grabs show up 0.0% of the time. Against a 54/100 pass defense, average 1Q yards 12.0 vs a modeled line 11.9 — likely an UNDER/fade unless price is generous.",True
+P.Washington,JAX,WR,TEN,Last 5 games (Weeks 8–12),4,5.4,21.73913043478261,0.0,5.0,20.0,9.0,8.884226190562568,56.43187830207952,33.17140386690133,F,badge-volatile,"P.Washington is JAX's primary 1Q read with strong target share and aDOT around 5.0. Catch rate vs expectation sits at 20.0 pts and explosive grabs show up 0.0% of the time. Against a 56/100 pass defense, average 1Q yards 9.0 vs a modeled line 8.9 — likely an UNDER/fade unless price is generous.",True
+C.Kirk,HOU,WR,IND,Last 5 games (Weeks 8–12),5,3.0,17.073170731707318,0.0,4.0,-17.142857142857146,10.5,9.45000000070334,99.99999996650756,0.0,F,badge-volatile,"C.Kirk is HOU's primary 1Q read with strong target share and aDOT around 4.0. Catch rate vs expectation sits at -17.1 pts and explosive grabs show up 0.0% of the time. Against a 99/100 pass defense, average 1Q yards 10.5 vs a modeled line 9.5 — likely an UNDER/fade unless price is generous.",True
+C.Olave,NO,WR,MIA,Last 5 games (Weeks 8–12),3,5.333333333333333,16.666666666666664,0.0,1.6666666666666667,40.0,8.0,8.693297459869488,6.668908758156967,35.06829935712156,F,badge-volatile,"C.Olave is NO's primary 1Q read with strong target share and aDOT around 1.7. Catch rate vs expectation sits at 40.0 pts and explosive grabs show up 0.0% of the time. Against a 6/100 pass defense, average 1Q yards 8.0 vs a modeled line 8.7 — likely an UNDER/fade unless price is generous.",True
+D.Mooney,ATL,WR,NYG,Last 5 games (Weeks 8–12),5,6.0,23.076923076923077,0.0,14.666666666666666,6.666666666666657,9.0,9.295439760669689,33.58667996279501,48.89423961939952,F,badge-volatile,"D.Mooney is ATL's primary 1Q read with strong target share and aDOT around 14.7. Catch rate vs expectation sits at 6.7 pts and explosive grabs show up 0.0% of the time. Against a 33/100 pass defense, average 1Q yards 9.0 vs a modeled line 9.3 — likely an UNDER/fade unless price is generous.",True
+M.Harrison,ARI,WR,TB,Last 5 games (Weeks 8–12),2,8.25,25.0,0.0,12.75,-10.0,33.0,33.5000015489625,42.42421895511356,59.025501722583314,F,badge-volatile,"M.Harrison is ARI's primary 1Q read with strong target share and aDOT around 12.8. Catch rate vs expectation sits at -10.0 pts and explosive grabs show up 0.0% of the time. Against a 42/100 pass defense, average 1Q yards 33.0 vs a modeled line 33.5 — likely an UNDER/fade unless price is generous.",True
+A.Jones,MIN,WR,SEA,Last 5 games (Weeks 8–12),5,1.8571428571428572,26.923076923076923,0.0,1.1428571428571428,-17.142857142857146,4.333333333333333,4.292101131057872,54.75756180101479,29.028409375173446,F,badge-volatile,"A.Jones is MIN's primary 1Q read with strong target share and aDOT around 1.1. Catch rate vs expectation sits at -17.1 pts and explosive grabs show up 0.0% of the time. Against a 54/100 pass defense, average 1Q yards 4.3 vs a modeled line 4.3 — likely an UNDER/fade unless price is generous.",True
+K.Shakir,BUF,WR,PIT,Last 5 games (Weeks 8–12),5,4.571428571428571,21.875,0.0,-1.4285714285714286,40.0,10.666666666666666,11.29012814443531,20.775243229594867,38.059251885269326,F,badge-volatile,"K.Shakir is BUF's primary 1Q read with strong target share and aDOT around -1.4. Catch rate vs expectation sits at 40.0 pts and explosive grabs show up 0.0% of the time. Against a 20/100 pass defense, average 1Q yards 10.7 vs a modeled line 11.3 — likely an UNDER/fade unless price is generous.",True
+T.Tucker,LV,WR,LAC,Last 5 games (Weeks 8–12),4,-0.2,17.24137931034483,0.0,11.8,-20.0,-0.5,0.0,43.14720291791733,6.8100952326056925,F,badge-volatile,"T.Tucker is LV's primary 1Q read with strong target share and aDOT around 11.8. Catch rate vs expectation sits at -20.0 pts and explosive grabs show up 0.0% of the time. Against a 43/100 pass defense, average 1Q yards -0.5 vs a modeled line 0.0 — likely an UNDER/fade unless price is generous.",True
+T.Franklin,DEN,WR,WAS,Last 5 games (Weeks 8–12),3,7.0,26.31578947368421,50.0,24.4,-20.0,17.5,19.1068296584339,4.090581187602981,84.10369361799953,B,badge-edge,"T.Franklin is DEN's primary 1Q read with strong target share and aDOT around 24.4. Catch rate vs expectation sits at -20.0 pts and explosive grabs show up 50.0% of the time. Against a 4/100 pass defense, average 1Q yards 17.5 vs a modeled line 19.1 — consider at good numbers; volume can wobble.",True
+A.Mitchell,NYJ,WR,NE,Last 5 games (Weeks 8–12),3,8.666666666666666,27.27272727272727,0.0,14.333333333333334,6.666666666666657,13.0,14.081458912837324,8.40542642933372,76.25202748142307,C+,badge-steady,"A.Mitchell is NYJ's primary 1Q read with strong target share and aDOT around 14.3. Catch rate vs expectation sits at 6.7 pts and explosive grabs show up 0.0% of the time. Against a 8/100 pass defense, average 1Q yards 13.0 vs a modeled line 14.1 — consider at good numbers; volume can wobble.",True
+</script>
+
+<script>
+  // Simple state holder for search + grade filters
+  var MLH_STATE = {
+    pass: { query: "", gradeFilter: null },
+    rush: { query: "", gradeFilter: null },
+    rec: { query: "", gradeFilter: null }
+  };
+
+  function setupCsvDownload(buttonId, scriptId, filename) {
+    var btn = document.getElementById(buttonId);
+    var dataEl = document.getElementById(scriptId);
+    if (!btn || !dataEl) return;
+    btn.addEventListener("click", function () {
+      var csv = dataEl.textContent || "";
+      var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  function buildMobileCards(sheetKey) {
+    var table = document.getElementById("table-" + sheetKey);
+    var list = document.getElementById("mobile-" + sheetKey + "-list");
+    if (!table || !list) return;
+
+    var headers = Array.prototype.map.call(
+      table.querySelectorAll("thead th"),
+      function (th) { return th.textContent.trim(); }
+    );
+    var gradeIndex = parseInt(table.getAttribute("data-grade-col"), 10);
+    var justIndex = parseInt(table.getAttribute("data-just-col"), 10);
+    var rows = Array.prototype.slice.call(table.querySelectorAll("tbody tr"));
+
+    rows.forEach(function (row, idx) {
+      row.setAttribute("data-row-index", idx);
+      row.setAttribute("data-sheet", sheetKey);
+
+      var cells = Array.prototype.slice.call(row.cells);
+      var textCells = cells.map(function (td) { return td.textContent.trim(); });
+      var htmlCells = cells.map(function (td) { return td.innerHTML.trim(); });
+
+      var team = textCells[0] || "";
+      var player = textCells[1] || "";
+      var opponent = textCells[2] || "";
+
+      var gradeHtml = gradeIndex >= 0 && gradeIndex < htmlCells.length ? htmlCells[gradeIndex] : "";
+      var justHtml = justIndex >= 0 && justIndex < htmlCells.length ? htmlCells[justIndex] : "";
+
+      var card = document.createElement("article");
+      card.className = "mobile-card";
+      card.setAttribute("data-sheet", sheetKey);
+      card.setAttribute("data-row-index", idx);
+
+      var metricsHtml = "";
+      for (var i = 0; i < headers.length; i++) {
+        if (i <= 2 || i === gradeIndex || i === justIndex) continue;
+        var label = headers[i];
+        var valueHtml = htmlCells[i] || "";
+        if (!valueHtml) continue;
+        metricsHtml +=
+          '<div class="metric-pill">' +
+          '<span class="metric-label">' + label + "</span>" +
+          '<span class="metric-value">' + valueHtml + "</span>" +
+          "</div>";
+      }
+
+      card.innerHTML =
+        '<details class="card-accordion">' +
+        '<summary class="card-summary">' +
+        '<div class="summary-main">' +
+        '<div class="summary-line-top">' + team + " · " + player + "</div>" +
+        '<div class="summary-line-bottom">vs ' + opponent + "</div>" +
+        "</div>" +
+        '<div class="summary-grade">' +
+        gradeHtml +
+        '<span class="summary-arrow">Tap to expand ▾</span>' +
+        "</div>" +
+        "</summary>" +
+        '<div class="card-content">' +
+        '<div class="metric-strip">' + metricsHtml + "</div>" +
+        '<div class="card-just">' + justHtml + "</div>" +
+        "</div>" +
+        "</details>";
+
+      list.appendChild(card);
+    });
+  }
+
+  function updateVisibility(sheetKey) {
+    var state = MLH_STATE[sheetKey] || { query: "", gradeFilter: null };
+    var query = (state.query || "").toLowerCase();
+    var gradeFilter = state.gradeFilter;
+
+    var table = document.getElementById("table-" + sheetKey);
+    if (!table) return;
+    var gradeIndex = parseInt(table.getAttribute("data-grade-col"), 10);
+    var rows = Array.prototype.slice.call(table.querySelectorAll("tbody tr"));
+    var cards = Array.prototype.slice.call(
+      document.querySelectorAll('.mobile-card[data-sheet="' + sheetKey + '"]')
+    );
+
+    rows.forEach(function (row, idx) {
+      var text = row.textContent.toLowerCase();
+      var matchQuery = !query || text.indexOf(query) !== -1;
+
+      var matchGrade = true;
+      if (gradeFilter && gradeFilter !== "RESET") {
+        var gradeCell = gradeIndex >= 0 && gradeIndex < row.cells.length ? row.cells[gradeIndex] : null;
+        var gradeText = gradeCell ? gradeCell.textContent.toUpperCase() : "";
+        if (gradeFilter === "A") {
+          matchGrade = gradeText.indexOf("A") !== -1;
+        } else if (gradeFilter === "BPLUS") {
+          matchGrade = gradeText.indexOf("A") !== -1 || gradeText.indexOf("B") !== -1;
+        }
+      }
+
+      var visible = matchQuery && matchGrade;
+      row.style.display = visible ? "" : "none";
+
+      var card = cards[idx];
+      if (card) {
+        card.style.display = visible ? "" : "none";
+      }
+    });
+  }
+
+  function setupSearch(sheetKey) {
+    var input = document.getElementById("search-" + sheetKey);
+    if (!input) return;
+    input.addEventListener("input", function () {
+      MLH_STATE[sheetKey].query = input.value || "";
+      updateVisibility(sheetKey);
+    });
+  }
+
+  function setupGradeFilters(sheetKey) {
+    var container = document.querySelector('[data-sheet-filters="' + sheetKey + '"]');
+    if (!container) return;
+    var pills = Array.prototype.slice.call(container.querySelectorAll(".filter-pill"));
+
+    function clearActive() {
+      pills.forEach(function (p) { p.classList.remove("active"); });
+    }
+
+    pills.forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var filter = pill.getAttribute("data-grade-filter");
+        if (filter === "RESET") {
+          MLH_STATE[sheetKey].gradeFilter = null;
+          clearActive();
+        } else {
+          MLH_STATE[sheetKey].gradeFilter = filter;
+          clearActive();
+          pill.classList.add("active");
+        }
+        updateVisibility(sheetKey);
+      });
+    });
+  }
+
+  function switchSheet(target) {
+    var panels = document.querySelectorAll("[data-sheet-panel]");
+    panels.forEach(function (panel) {
+      panel.classList.toggle("active", panel.getAttribute("data-sheet-panel") === target);
+    });
+
+    var tabs = document.querySelectorAll(".tab");
+    tabs.forEach(function (tab) {
+      tab.classList.toggle("active", tab.getAttribute("data-sheet") === target);
+    });
+
+    var bottomBtns = document.querySelectorAll(".bottom-nav-btn[data-sheet]");
+    bottomBtns.forEach(function (btn) {
+      btn.classList.toggle("active", btn.getAttribute("data-sheet") === target);
+    });
+  }
+
+  function setupTabsAndNav() {
+    var tabs = document.querySelectorAll(".tab");
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var sheet = tab.getAttribute("data-sheet");
+        if (sheet) switchSheet(sheet);
+      });
+    });
+
+    var bottomBtns = document.querySelectorAll(".bottom-nav-btn[data-sheet]");
+    bottomBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var sheet = btn.getAttribute("data-sheet");
+        if (sheet) switchSheet(sheet);
+      });
+    });
+
+    var glossBtn = document.querySelector('.bottom-nav-btn[data-scroll-target="glossary"]');
+    if (glossBtn) {
+      glossBtn.addEventListener("click", function () {
+        var el = document.getElementById("glossary");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // CSV download buttons
+    setupCsvDownload("btn-pass-csv", "data-pass-csv", "pass_1q.csv");
+    setupCsvDownload("btn-rush-csv", "data-rush-csv", "rush_1q.csv");
+    setupCsvDownload("btn-rec-csv", "data-rec-csv", "rec_1q.csv");
+
+    // Build mobile cards from whatever rows the agent injected
+    buildMobileCards("pass");
+    buildMobileCards("rush");
+    buildMobileCards("rec");
+
+    // Search + grade filters
+    setupSearch("pass");
+    setupSearch("rush");
+    setupSearch("rec");
+
+    setupGradeFilters("pass");
+    setupGradeFilters("rush");
+    setupGradeFilters("rec");
+
+    // Tabs + bottom nav
+    setupTabsAndNav();
+
+    // Initial visibility sync
+    updateVisibility("pass");
+    updateVisibility("rush");
+    updateVisibility("rec");
+  });
+</script>
+</body>
+</html>
