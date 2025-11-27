@@ -9,429 +9,257 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing:border-box; }
+* { box-sizing:border-box; }
+body {
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:#0b1220;
+  color:#e5e7eb;
+  margin:0;
+}
 
+/* Root container with ID so we can scale on mobile */
+#mlh-root.container {
+  max-width:1200px;
+  margin:32px auto;
+  padding:0 16px;
+}
+
+.header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.logo {
+  font-weight:800;
+  font-size:22px;
+  letter-spacing:.5px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-icon {
+  width:20px;
+  height:20px;
+  border-radius:6px;
+  background:linear-gradient(135deg,#22c55e,#0ea5e9);
+  box-shadow:0 0 18px rgba(34,197,94,.6);
+}
+.tabs {
+  display:flex;
+  gap:8px;
+  margin:16px 0;
+}
+.tab {
+  background:#111827;
+  color:#cbd5e1;
+  border:1px solid #1f2937;
+  padding:10px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:13px;
+}
+.tab.active {
+  background:#0ea5e9;
+  color:#fff;
+  box-shadow:0 0 12px #0ea5e955;
+}
+.card {
+  background:#0f172a;
+  border:1px solid #1f2937;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  margin-bottom:18px;
+}
+.controls {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.controls input {
+  flex:1;
+  min-width:200px;
+  background:#020617;
+  color:#e5e7eb;
+  border:1px solid #1f2937;
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:13px;
+}
+.controls input::placeholder {
+  color:#6b7280;
+}
+.func-label {
+  font-size:12px;
+  color:#9ca3af;
+  opacity:.9;
+}
+
+table {
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px;
+}
+thead th {
+  position:sticky;
+  top:0;
+  background:#0b1220;
+  padding:8px 10px;
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  color:#9ca3af;
+  letter-spacing:.04em;
+  border-bottom:1px solid #1f2937;
+}
+tbody td {
+  background:#020617;
+  padding:12px 10px;
+  font-size:13px;
+  border-top:1px solid #1f2937;
+  border-bottom:1px solid #1f2937;
+}
+tbody tr {
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+}
+tbody tr:hover {
+  transform:scale(1.005);
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+  background:#020617;
+}
+
+.grade-wrap {
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.grade {
+  font-weight:800;
+  margin-right:0;
+  font-size:13px;
+}
+.badge {
+  padding:4px 8px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:12px;
+  border:1px solid transparent;
+  min-width:38px;
+  text-align:center;
+}
+
+/* BADGES */
+.badge-elite {
+  background:#052e2b;
+  border-color:#10b981;
+  box-shadow:0 0 10px #10b981aa;
+  color:#10b981;
+}
+.badge-edge {
+  background:#0a223f;
+  border-color:#3b82f6;
+  box-shadow:0 0 10px #3b82f6aa;
+  color:#3b82f6;
+}
+.badge-steady {
+  background:#3a2a06;
+  border-color:#f59e0b;
+  box-shadow:0 0 10px #f59e0baa;
+  color:#f59e0b;
+}
+/* F-tier (red) */
+.badge-volatile {
+  background:#3a0a0a;
+  border-color:#ef4444;
+  box-shadow:0 0 10px #ef4444aa;
+  color:#ef4444;
+}
+/* D-tier: red with a hint of orange so it’s distinct from F but clearly risky */
+.badge-highrisk {
+  background:#451010;         /* deeper red base */
+  border-color:#f97316;       /* red-orange edge */
+  box-shadow:0 0 10px #f97316aa;
+  color:#fed7aa;              /* warm text to sell “caution” */
+}
+
+.just { max-width:420px; }
+
+.buttons {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.button {
+  background:#111827;
+  border:1px solid #1f2937;
+  color:#e5e7eb;
+  padding:8px 12px;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+}
+.button-primary {
+  background:#0ea5e9;
+  border-color:#0ea5e9;
+  color:#f9fafb;
+  box-shadow:0 0 18px #0ea5e966;
+}
+.button:hover { filter:brightness(1.07); }
+
+.footer {
+  opacity:.8;
+  font-size:12px;
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.glossary {
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#020617;
+  border:1px solid #1f2937;
+  font-size:12px;
+  line-height:1.5;
+  color:#9ca3af;
+}
+.glossary-title {
+  font-weight:700;
+  color:#e5e7eb;
+  margin-bottom:4px;
+  font-size:12px;
+}
+
+/* MOBILE SCALING FOR WIX / SMALL SCREENS */
+@media (max-width: 768px) {
   html, body {
     margin:0;
     padding:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:#020617;
-    color:#e5e7eb;
-    -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
 
-  /* Root container for embedding (Wix, GitHub, etc.) */
   #mlh-root.container {
-    width:100%;
-    max-width:1200px;
-    margin:16px auto 32px;
-    padding:0 12px;
+    transform:scale(0.8);
+    transform-origin:top left;
+    width:125%;
   }
 
-  .header {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-bottom:12px;
-  }
-
-  .logo {
-    font-weight:800;
-    font-size:20px;
-    letter-spacing:.5px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-
-  .logo-icon {
-    width:22px;
-    height:22px;
-    border-radius:8px;
-    background:linear-gradient(135deg,#22c55e,#0ea5e9);
-    box-shadow:0 0 18px rgba(34,197,94,.7);
-  }
-
-  .buttons {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    width:100%;
-    margin-top:4px;
-  }
-
-  .button {
-    background:#111827;
-    border:1px solid #1f2937;
-    color:#e5e7eb;
-    padding:9px 12px;
-    border-radius:12px;
-    text-decoration:none;
-    font-size:13px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    cursor:pointer;
-  }
-
-  .button-primary {
-    background:#0ea5e9;
-    border-color:#0ea5e9;
-    color:#f9fafb;
-    box-shadow:0 0 18px #0ea5e966;
-    font-weight:600;
-  }
-
-  .button:hover {
-    filter:brightness(1.07);
-  }
-
-  .tabs {
-    position:sticky;
-    top:0;
-    z-index:20;
-    margin:12px -12px 12px;
-    padding:8px 12px 6px;
-    background:linear-gradient(to bottom,rgba(15,23,42,0.96),rgba(15,23,42,0.9));
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    border-bottom:1px solid #1f2937;
-  }
-
-  .tab {
-    white-space:nowrap;
-    background:#020617;
-    color:#cbd5e1;
-    border:1px solid #1f2937;
-    padding:8px 14px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:13px;
-    flex:0 0 auto;
-  }
-
-  .tab.active {
-    background:#0ea5e9;
-    color:#fff;
-    box-shadow:0 0 12px #0ea5e955;
-    font-weight:600;
-  }
-
-  .card {
-    background:#020617;
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 16px 40px rgba(0,0,0,.6);
-    border:1px solid #1f2937;
-    margin-bottom:16px;
-  }
-
-  .controls {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    margin-bottom:10px;
-  }
-
-  .controls input {
-    width:100%;
-    background:#020617;
-    color:#e5e7eb;
-    border:1px solid #1f2937;
-    border-radius:10px;
-    padding:8px 10px;
-    font-size:13px;
-  }
-
-  .controls input::placeholder {
-    color:#6b7280;
-  }
-
-  .func-label {
-    font-size:11px;
-    color:#9ca3af;
-    opacity:.9;
-  }
-
-  /* TABLE BASE – MOBILE-FIRST: CARD VIEW */
-
-  table {
-    width:100%;
-    border-collapse:separate;
-    border-spacing:0 10px;
-  }
-
-  thead {
-    display:none; /* hidden on mobile, shown on desktop via media query */
-  }
-
-  tbody {
-    display:block;
-    margin:0;
-    padding:0;
-  }
-
-  tbody tr {
-    display:block;
-    background:#020617;
-    border-radius:14px;
-    padding:10px 10px 8px;
-    margin-bottom:10px;
-    border:1px solid #1f2937;
-    box-shadow:0 10px 28px rgba(0,0,0,.55);
-    transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
-  }
-
-  tbody tr:hover {
-    transform:translateY(-1px);
-    box-shadow:0 14px 36px rgba(0,0,0,.65);
-    background:#020617;
-  }
-
-  tbody td {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:4px 0;
-    font-size:12px;
-    border:none;
-    gap:8px;
-  }
-
-  tbody td::before {
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.03em;
-    color:#6b7280;
-    flex:0 0 auto;
-    margin-right:8px;
-    content:"";
-  }
-
-  /* PASS labels */
-  #table-pass tbody td:nth-child(1)::before { content:"Team"; }
-  #table-pass tbody td:nth-child(2)::before { content:"QB Player"; }
-  #table-pass tbody td:nth-child(3)::before { content:"Opponent"; }
-  #table-pass tbody td:nth-child(4)::before { content:"Adj_Eff"; }
-  #table-pass tbody td:nth-child(5)::before { content:"Success%"; }
-  #table-pass tbody td:nth-child(6)::before { content:"Explosive%"; }
-  #table-pass tbody td:nth-child(7)::before { content:"Neutral Pass%"; }
-  #table-pass tbody td:nth-child(8)::before { content:"aDOT"; }
-  #table-pass tbody td:nth-child(9)::before { content:"Def 1Q Pass"; }
-  #table-pass tbody td:nth-child(10)::before { content:"Grade"; }
-  #table-pass tbody td:nth-child(11)::before { content:"Edge Note"; }
-
-  /* RUSH labels */
-  #table-rush tbody td:nth-child(1)::before { content:"Player"; }
-  #table-rush tbody td:nth-child(2)::before { content:"Pos"; }
-  #table-rush tbody td:nth-child(3)::before { content:"Opponent"; }
-  #table-rush tbody td:nth-child(4)::before { content:"Adj_Eff"; }
-  #table-rush tbody td:nth-child(5)::before { content:"Success%"; }
-  #table-rush tbody td:nth-child(6)::before { content:"Explosive%"; }
-  #table-rush tbody td:nth-child(7)::before { content:"YAC/att"; }
-  #table-rush tbody td:nth-child(8)::before { content:"Carries"; }
-  #table-rush tbody td:nth-child(9)::before { content:"Def 1Q Rush"; }
-  #table-rush tbody td:nth-child(10)::before { content:"Grade"; }
-  #table-rush tbody td:nth-child(11)::before { content:"Edge Note"; }
-
-  /* REC labels */
-  #table-rec tbody td:nth-child(1)::before { content:"Player"; }
-  #table-rec tbody td:nth-child(2)::before { content:"Team"; }
-  #table-rec tbody td:nth-child(3)::before { content:"Pos"; }
-  #table-rec tbody td:nth-child(4)::before { content:"Opponent"; }
-  #table-rec tbody td:nth-child(5)::before { content:"YPRR"; }
-  #table-rec tbody td:nth-child(6)::before { content:"TPRR"; }
-  #table-rec tbody td:nth-child(7)::before { content:"Explosive%"; }
-  #table-rec tbody td:nth-child(8)::before { content:"aDOT"; }
-  #table-rec tbody td:nth-child(9)::before { content:"Catch% vs Exp"; }
-  #table-rec tbody td:nth-child(10)::before { content:"Def 1Q Pass"; }
-  #table-rec tbody td:nth-child(11)::before { content:"Grade"; }
-  #table-rec tbody td:nth-child(12)::before { content:"Edge Note"; }
-
-  .grade-wrap {
-    display:flex;
-    align-items:center;
-    gap:6px;
-    justify-content:flex-end;
-  }
-
-  .grade {
-    font-weight:800;
-    font-size:13px;
-    margin:0;
-  }
-
-  .badge {
-    padding:3px 8px;
-    border-radius:999px;
-    font-weight:700;
-    font-size:11px;
-    border:1px solid transparent;
-    min-width:34px;
-    text-align:center;
-  }
-
-  /* BADGE COLORS (kept from your working version, including D-tier) */
-  .badge-elite {
-    background:#052e2b;
-    border-color:#10b981;
-    box-shadow:0 0 10px #10b981aa;
-    color:#10b981;
-  }
-
-  .badge-edge {
-    background:#0a223f;
-    border-color:#3b82f6;
-    box-shadow:0 0 10px #3b82f6aa;
-    color:#3b82f6;
-  }
-
-  .badge-steady {
-    background:#3a2a06;
-    border-color:#f59e0b;
-    box-shadow:0 0 10px #f59e0baa;
-    color:#f59e0b;
-  }
-
-  /* F-tier (red) */
-  .badge-volatile {
-    background:#3a0a0a;
-    border-color:#ef4444;
-    box-shadow:0 0 10px #ef4444aa;
-    color:#ef4444;
-  }
-
-  /* D-tier: red with hint of orange */
-  .badge-highrisk {
-    background:#451010;
-    border-color:#f97316;
-    box-shadow:0 0 10px #f97316aa;
-    color:#fed7aa;
-  }
-
-  .just {
-    max-width:420px;
-    text-align:right;
-  }
-
-  .footer {
-    opacity:.85;
-    font-size:11px;
-    margin-top:8px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-
-  .glossary {
-    margin-top:14px;
-    padding:12px 14px;
-    border-radius:14px;
-    background:#020617;
-    border:1px solid #1f2937;
-    font-size:12px;
-    line-height:1.5;
-    color:#9ca3af;
-  }
-
-  .glossary-title {
-    font-weight:700;
-    color:#e5e7eb;
-    margin-bottom:4px;
+  body, table, th, td {
     font-size:12px;
   }
-
-  /* DESKTOP / LARGE SCREENS – TRUE TABLE VIEW */
-
-  @media (min-width: 900px) {
-    #mlh-root.container {
-      max-width:1200px;
-      padding:0 16px;
-      margin:32px auto 40px;
-    }
-
-    .header {
-      flex-direction:row;
-      align-items:center;
-      justify-content:space-between;
-    }
-
-    .buttons {
-      flex-direction:row;
-      width:auto;
-    }
-
-    .card {
-      padding:16px;
-    }
-
-    .controls {
-      flex-direction:row;
-      align-items:center;
-    }
-
-    .controls input {
-      max-width:320px;
-    }
-
-    thead {
-      display:table-header-group;
-    }
-
-    tbody {
-      display:table-row-group;
-    }
-
-    tbody tr {
-      display:table-row;
-      border-radius:0;
-      box-shadow:none;
-      padding:0;
-      margin-bottom:0;
-      border:none;
-    }
-
-    tbody td {
-      display:table-cell;
-      padding:10px 10px;
-      font-size:13px;
-      border-top:1px solid #1f2937;
-      border-bottom:1px solid #1f2937;
-    }
-
-    tbody td::before {
-      content:"";
-      display:none;
-    }
-
-    thead th {
-      position:sticky;
-      top:0;
-      background:#020617;
-      padding:8px 10px;
-      text-align:left;
-      font-size:11px;
-      text-transform:uppercase;
-      color:#9ca3af;
-      letter-spacing:.04em;
-      border-bottom:1px solid #1f2937;
-    }
-
-    tbody tr:hover {
-      transform:scale(1.005);
-      box-shadow:0 8px 22px rgba(0,0,0,.45);
-      background:#020617;
-    }
-
-    .footer {
-      flex-direction:row;
-      justify-content:space-between;
-      font-size:12px;
-    }
-  }
+}
 </style>
 </head>
 
@@ -471,6 +299,7 @@
       </thead>
       <tbody>
         <!-- PASS ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
         <tr><td>GB</td><td>J.Love</td><td>DET</td><td>-0.1</td><td>50.2%</td><td>5.0%</td><td>44.0%</td><td>7.0</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile passing start into a tougher DET front; overs need broken plays or short fields.</td></tr>
         <tr><td>DET</td><td>J.Goff</td><td>GB</td><td>-0.0</td><td>59.0%</td><td>20.8%</td><td>62.5%</td><td>5.6</td><td>0</td><td><div class="grade-wrap"><span class="grade">72.4</span><span class="badge badge-steady">C</span></div></td><td>Steady early script with moderate explosives; 1Q over live if drives stay on schedule vs GB.</td></tr>
         <!-- ... all your existing PASS rows unchanged ... -->
@@ -495,6 +324,7 @@
       </thead>
       <tbody>
         <!-- RUSH ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
         <tr><td>J.Jacobs</td><td>RB</td><td>DET</td><td>0.0</td><td>52.3%</td><td>16.3%</td><td>0.0</td><td>7.0</td><td>67</td><td><div class="grade-wrap"><span class="grade">64.3</span><span class="badge badge-highrisk">D</span></div></td><td>Solid efficiency but stiff front; 1Q over needs script cooperation and clean red-zone drive.</td></tr>
         <!-- ... all your existing RUSH rows unchanged ... -->
         <tr><td>T.Henderson</td><td>RB</td><td>NYG</td><td>-0.0</td><td>54.8%</td><td>10.0%</td><td>0.0</td><td>6.2</td><td>1</td><td><div class="grade-wrap"><span class="grade">49.3</span><span class="badge badge-volatile">F</span></div></td><td>Role and blocking are too shaky early; 1Q rushing overs here are mostly dart throws.</td></tr>
@@ -519,6 +349,7 @@
       </thead>
       <tbody>
         <!-- REC ROWS (auto-filled by your GPT) -->
+        <!-- existing sample rows kept as-is -->
         <tr><td>C.Watson</td><td>GB</td><td>WR</td><td>DET</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>20.4</td><td>-9.9%</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Sporadic early targets and catch issues; 1Q overs hinge on a single deep shot vs DET.</td></tr>
         <!-- ... all your existing REC rows unchanged ... -->
         <tr><td>S.Diggs</td><td>NE</td><td>WR</td><td>NYG</td><td>1.3</td><td>0.2</td><td>0.0%</td><td>10.8</td><td>17.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Volume and matchup don’t fully align; better used as context than a 1Q over target vs NYG.</td></tr>
@@ -598,20 +429,13 @@ function setupSearch(inputId, tableId){
   var table = document.getElementById(tableId);
   if(!input || !table) return;
   var rows = table.querySelectorAll('tbody tr');
-
-  function applyFilter(){
-    var q = (input.value || '').toLowerCase();
+  input.addEventListener('input', function(){
+    var q = input.value.toLowerCase();
     rows.forEach(function(row){
       var text = row.textContent.toLowerCase();
-      if (text.indexOf(q) === -1) {
-        row.style.display = 'none';
-      } else {
-        row.style.display = ''; // let CSS decide: block on mobile, table-row on desktop
-      }
+      row.style.display = text.indexOf(q) === -1 ? 'none' : 'table-row';
     });
-  }
-
-  input.addEventListener('input', applyFilter);
+  });
 }
 
 function setupTabs(){
