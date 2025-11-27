@@ -3,445 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <title>Moneyline Hacks — 1Q Sheets (Week 13)</title>
-
-<!-- Mobile viewport for proper scaling on phones -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing:border-box; }
+* { box-sizing:border-box; }
+body { font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#0b1220;color:#e5e7eb;margin:0; }
+.container { max-width:1200px;margin:32px auto;padding:0 16px; }
+.header { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap; }
+.logo { font-weight:800;font-size:22px;letter-spacing:.5px;display:flex;align-items:center;gap:8px; }
+.logo-icon { width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#0ea5e9);box-shadow:0 0 18px rgba(34,197,94,.6); }
+.tabs { display:flex;gap:8px;margin:16px 0; }
+.tab { background:#111827;color:#cbd5e1;border:1px solid #1f2937;padding:10px 14px;border-radius:999px;cursor:pointer;font-size:13px; }
+.tab.active { background:#0ea5e9;color:#fff;box-shadow:0 0 12px #0ea5e955; }
+.card { background:#0f172a;border:1px solid #1f2937;border-radius:20px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.35);margin-bottom:18px; }
+.controls { display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px; }
+.controls input { flex:1;min-width:200px;background:#020617;color:#e5e7eb;border:1px solid #1f2937;border-radius:10px;padding:8px 10px;font-size:13px; }
+.controls input::placeholder { color:#6b7280; }
+.func-label { font-size:12px;color:#9ca3af;opacity:.9; }
+table { width:100%;border-collapse:separate;border-spacing:0 8px; }
+thead th { position:sticky;top:0;background:#0b1220;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;color:#9ca3af;letter-spacing:.04em;border-bottom:1px solid #1f2937; }
+tbody td { background:#020617;padding:12px 10px;font-size:13px;border-top:1px solid #1f2937;border-bottom:1px solid #1f2937; }
+tbody tr { transition:transform .12s ease,box-shadow .12s ease,background .12s ease; }
+tbody tr:hover { transform:scale(1.005);box-shadow:0 8px 22px rgba(0,0,0,.45);background:#020617; }
+.grade-wrap { display:flex;align-items:center;gap:6px; }
+.grade { font-weight:800;margin-right:0;font-size:13px; }
+.badge { padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px;border:1px solid transparent;min-width:38px;text-align:center; }
 
-  html, body {
-    margin:0;
-    padding:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:#020617;
-    color:#e5e7eb;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
+/* EXISTING BADGES */
+.badge-elite { background:#052e2b;border-color:#10b981;box-shadow:0 0 10px #10b981aa;color:#10b981; }
+.badge-edge { background:#0a223f;border-color:#3b82f6;box-shadow:0 0 10px #3b82f6aa;color:#3b82f6; }
+.badge-steady { background:#3a2a06;border-color:#f59e0b;box-shadow:0 0 10px #f59e0baa;color:#f59e0b; }
+.badge-volatile { background:#3a0a0a;border-color:#ef4444;box-shadow:0 0 10px #ef4444aa;color:#ef4444; }
 
-  /* Root container for embedding (Wix, GitHub, etc.) */
-  #mlh-root.container {
-    width:100%;
-    max-width:1200px;
-    margin:16px auto 32px;
-    padding:0 12px;
-  }
+/* NEW: ORANGE GLOW FOR D-TIER (60–67) */
+.badge-highrisk {
+  background:#3a0704;
+  border-color:#fb923c;
+  box-shadow:0 0 10px #fb923caa;
+  color:#fb923c;
+}
 
-  .header {
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-bottom:12px;
-  }
-
-  .logo {
-    font-weight:800;
-    font-size:20px;
-    letter-spacing:.5px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-
-  .logo-icon {
-    width:22px;
-    height:22px;
-    border-radius:8px;
-    background:linear-gradient(135deg,#22c55e,#0ea5e9);
-    box-shadow:0 0 18px rgba(34,197,94,.7);
-  }
-
-  .buttons {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    width:100%;
-    margin-top:4px;
-  }
-
-  .button {
-    background:#111827;
-    border:1px solid #1f2937;
-    color:#e5e7eb;
-    padding:9px 12px;
-    border-radius:12px;
-    text-decoration:none;
-    font-size:13px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    cursor:pointer;
-  }
-
-  .button-primary {
-    background:#0ea5e9;
-    border-color:#0ea5e9;
-    color:#f9fafb;
-    box-shadow:0 0 18px #0ea5e966;
-    font-weight:600;
-  }
-
-  .button:hover {
-    filter:brightness(1.07);
-  }
-
-  .tabs {
-    position:sticky;
-    top:0;
-    z-index:20;
-    margin:12px -12px 12px;
-    padding:8px 12px 6px;
-    background:linear-gradient(to bottom,rgba(15,23,42,0.96),rgba(15,23,42,0.9));
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    border-bottom:1px solid #1f2937;
-  }
-
-  .tab {
-    white-space:nowrap;
-    background:#020617;
-    color:#cbd5e1;
-    border:1px solid #1f2937;
-    padding:8px 14px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:13px;
-    flex:0 0 auto;
-  }
-
-  .tab.active {
-    background:#0ea5e9;
-    color:#fff;
-    box-shadow:0 0 12px #0ea5e955;
-    font-weight:600;
-  }
-
-  .card {
-    background:#020617;
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 16px 40px rgba(0,0,0,.6);
-    border:1px solid #1f2937;
-    margin-bottom:16px;
-  }
-
-  .controls {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    margin-bottom:10px;
-  }
-
-  .controls input {
-    width:100%;
-    background:#020617;
-    color:#e5e7eb;
-    border:1px solid #1f2937;
-    border-radius:10px;
-    padding:8px 10px;
-    font-size:13px;
-  }
-
-  .controls input::placeholder {
-    color:#6b7280;
-  }
-
-  .func-label {
-    font-size:11px;
-    color:#9ca3af;
-    opacity:.9;
-  }
-
-  /* TABLE BASE – MOBILE-FIRST: CARD VIEW */
-
-  table {
-    width:100%;
-    border-collapse:separate;
-    border-spacing:0 10px;
-  }
-
-  thead {
-    display:none; /* hidden on mobile, shown on desktop via media query */
-  }
-
-  tbody {
-    display:block;
-    margin:0;
-    padding:0;
-  }
-
-  tbody tr {
-    display:block;
-    background:#020617;
-    border-radius:14px;
-    padding:10px 10px 8px;
-    margin-bottom:10px;
-    border:1px solid #1f2937;
-    box-shadow:0 10px 28px rgba(0,0,0,.55);
-    transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
-  }
-
-  tbody tr:hover {
-    transform:translateY(-1px);
-    box-shadow:0 14px 36px rgba(0,0,0,.65);
-    background:#020617;
-  }
-
-  tbody td {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:4px 0;
-    font-size:12px;
-    border:none;
-    gap:8px;
-  }
-
-  tbody td::before {
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.03em;
-    color:#6b7280;
-    flex:0 0 auto;
-    margin-right:8px;
-    content:"";
-  }
-
-  /* PASS labels */
-  #table-pass tbody td:nth-child(1)::before { content:"Team"; }
-  #table-pass tbody td:nth-child(2)::before { content:"QB Player"; }
-  #table-pass tbody td:nth-child(3)::before { content:"Opponent"; }
-  #table-pass tbody td:nth-child(4)::before { content:"Adj_Eff"; }
-  #table-pass tbody td:nth-child(5)::before { content:"Success%"; }
-  #table-pass tbody td:nth-child(6)::before { content:"Explosive%"; }
-  #table-pass tbody td:nth-child(7)::before { content:"Neutral Pass%"; }
-  #table-pass tbody td:nth-child(8)::before { content:"aDOT"; }
-  #table-pass tbody td:nth-child(9)::before { content:"Def 1Q Pass"; }
-  #table-pass tbody td:nth-child(10)::before { content:"Grade"; }
-  #table-pass tbody td:nth-child(11)::before { content:"Edge Note"; }
-
-  /* RUSH labels */
-  #table-rush tbody td:nth-child(1)::before { content:"Player"; }
-  #table-rush tbody td:nth-child(2)::before { content:"Pos"; }
-  #table-rush tbody td:nth-child(3)::before { content:"Opponent"; }
-  #table-rush tbody td:nth-child(4)::before { content:"Adj_Eff"; }
-  #table-rush tbody td:nth-child(5)::before { content:"Success%"; }
-  #table-rush tbody td:nth-child(6)::before { content:"Explosive%"; }
-  #table-rush tbody td:nth-child(7)::before { content:"YAC/att"; }
-  #table-rush tbody td:nth-child(8)::before { content:"Carries"; }
-  #table-rush tbody td:nth-child(9)::before { content:"Def 1Q Rush"; }
-  #table-rush tbody td:nth-child(10)::before { content:"Grade"; }
-  #table-rush tbody td:nth-child(11)::before { content:"Edge Note"; }
-
-  /* REC labels */
-  #table-rec tbody td:nth-child(1)::before { content:"Player"; }
-  #table-rec tbody td:nth-child(2)::before { content:"Team"; }
-  #table-rec tbody td:nth-child(3)::before { content:"Pos"; }
-  #table-rec tbody td:nth-child(4)::before { content:"Opponent"; }
-  #table-rec tbody td:nth-child(5)::before { content:"YPRR"; }
-  #table-rec tbody td:nth-child(6)::before { content:"TPRR"; }
-  #table-rec tbody td:nth-child(7)::before { content:"Explosive%"; }
-  #table-rec tbody td:nth-child(8)::before { content:"aDOT"; }
-  #table-rec tbody td:nth-child(9)::before { content:"Catch% vs Exp"; }
-  #table-rec tbody td:nth-child(10)::before { content:"Def 1Q Pass"; }
-  #table-rec tbody td:nth-child(11)::before { content:"Grade"; }
-  #table-rec tbody td:nth-child(12)::before { content:"Edge Note"; }
-
-  .grade-wrap {
-    display:flex;
-    align-items:center;
-    gap:6px;
-    justify-content:flex-end;
-  }
-
-  .grade {
-    font-weight:800;
-    font-size:13px;
-    margin:0;
-  }
-
-  .badge {
-    padding:3px 8px;
-    border-radius:999px;
-    font-weight:700;
-    font-size:11px;
-    border:1px solid transparent;
-    min-width:34px;
-    text-align:center;
-  }
-
-  /* BADGE COLORS (kept from your working version, including D-tier) */
-  .badge-elite {
-    background:#052e2b;
-    border-color:#10b981;
-    box-shadow:0 0 10px #10b981aa;
-    color:#10b981;
-  }
-
-  .badge-edge {
-    background:#0a223f;
-    border-color:#3b82f6;
-    box-shadow:0 0 10px #3b82f6aa;
-    color:#3b82f6;
-  }
-
-  .badge-steady {
-    background:#3a2a06;
-    border-color:#f59e0b;
-    box-shadow:0 0 10px #f59e0baa;
-    color:#f59e0b;
-  }
-
-  /* F-tier (red) */
-  .badge-volatile {
-    background:#3a0a0a;
-    border-color:#ef4444;
-    box-shadow:0 0 10px #ef4444aa;
-    color:#ef4444;
-  }
-
-  /* D-tier: red with hint of orange */
-  .badge-highrisk {
-    background:#451010;
-    border-color:#f97316;
-    box-shadow:0 0 10px #f97316aa;
-    color:#fed7aa;
-  }
-
-  .just {
-    max-width:420px;
-    text-align:right;
-  }
-
-  .footer {
-    opacity:.85;
-    font-size:11px;
-    margin-top:8px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-
-  .glossary {
-    margin-top:14px;
-    padding:12px 14px;
-    border-radius:14px;
-    background:#020617;
-    border:1px solid #1f2937;
-    font-size:12px;
-    line-height:1.5;
-    color:#9ca3af;
-  }
-
-  .glossary-title {
-    font-weight:700;
-    color:#e5e7eb;
-    margin-bottom:4px;
-    font-size:12px;
-  }
-
-  /* DESKTOP / LARGE SCREENS – TRUE TABLE VIEW */
-
-  @media (min-width: 900px) {
-    #mlh-root.container {
-      max-width:1200px;
-      padding:0 16px;
-      margin:32px auto 40px;
-    }
-
-    .header {
-      flex-direction:row;
-      align-items:center;
-      justify-content:space-between;
-    }
-
-    .buttons {
-      flex-direction:row;
-      width:auto;
-    }
-
-    .card {
-      padding:16px;
-    }
-
-    .controls {
-      flex-direction:row;
-      align-items:center;
-    }
-
-    .controls input {
-      max-width:320px;
-    }
-
-    thead {
-      display:table-header-group;
-    }
-
-    tbody {
-      display:table-row-group;
-    }
-
-    tbody tr {
-      display:table-row;
-      border-radius:0;
-      box-shadow:none;
-      padding:0;
-      margin-bottom:0;
-      border:none;
-    }
-
-    tbody td {
-      display:table-cell;
-      padding:10px 10px;
-      font-size:13px;
-      border-top:1px solid #1f2937;
-      border-bottom:1px solid #1f2937;
-    }
-
-    tbody td::before {
-      content:"";
-      display:none;
-    }
-
-    thead th {
-      position:sticky;
-      top:0;
-      background:#020617;
-      padding:8px 10px;
-      text-align:left;
-      font-size:11px;
-      text-transform:uppercase;
-      color:#9ca3af;
-      letter-spacing:.04em;
-      border-bottom:1px solid #1f2937;
-    }
-
-    tbody tr:hover {
-      transform:scale(1.005);
-      box-shadow:0 8px 22px rgba(0,0,0,.45);
-      background:#020617;
-    }
-
-    .footer {
-      flex-direction:row;
-      justify-content:space-between;
-      font-size:12px;
-    }
-  }
+.just { max-width:420px; }
+.buttons { display:flex;gap:8px;flex-wrap:wrap; }
+.button { background:#111827;border:1px solid #1f2937;color:#e5e7eb;padding:8px 12px;border-radius:12px;text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer; }
+.button-primary { background:#0ea5e9;border-color:#0ea5e9;color:#f9fafb;box-shadow:0 0 18px #0ea5e966; }
+.button:hover { filter:brightness(1.07); }
+.footer { opacity:.8;font-size:12px;margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px; }
+.glossary { margin-top:14px;padding:12px 14px;border-radius:14px;background:#020617;border:1px solid #1f2937;font-size:12px;line-height:1.5;color:#9ca3af; }
+.glossary-title { font-weight:700;color:#e5e7eb;margin-bottom:4px;font-size:12px; }
 </style>
 </head>
 
 <body>
-<div id="mlh-root" class="container">
+<div class="container">
   <div class="header">
-    <div class="logo">
-      <div class="logo-icon"></div>
-      Moneyline Hacks — 1Q Sheets (Week 13)
-    </div>
+    <div class="logo"><div class="logo-icon"></div>Moneyline Hacks — 1Q Sheets (Week 13)</div>
     <div class="buttons">
       <button id="btn-pass-csv" class="button button-primary">Download PASS CSV</button>
       <button id="btn-rush-csv" class="button button-primary">Download RUSH CSV</button>
@@ -462,20 +77,39 @@
       <div class="func-label">Function: 1Q Over Passing Yards</div>
     </div>
     <table id="table-pass">
-      <thead>
-        <tr>
-          <th>Team</th><th>QB Player</th><th>Opponent</th><th>Adj_Eff</th>
-          <th>Success%</th><th>Explosive%</th><th>Pass Rate Neutral%</th>
-          <th>aDOT</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- PASS ROWS (auto-filled by your GPT) -->
-        <tr><td>GB</td><td>J.Love</td><td>DET</td><td>-0.1</td><td>50.2%</td><td>5.0%</td><td>44.0%</td><td>7.0</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Volatile passing start into a tougher DET front; overs need broken plays or short fields.</td></tr>
-        <tr><td>DET</td><td>J.Goff</td><td>GB</td><td>-0.0</td><td>59.0%</td><td>20.8%</td><td>62.5%</td><td>5.6</td><td>0</td><td><div class="grade-wrap"><span class="grade">72.4</span><span class="badge badge-steady">C</span></div></td><td>Steady early script with moderate explosives; 1Q over live if drives stay on schedule vs GB.</td></tr>
-        <!-- ... all your existing PASS rows unchanged ... -->
-        <tr><td>NE</td><td>D.Maye</td><td>NYG</td><td>0.2</td><td>42.8%</td><td>12.8%</td><td>47.4%</td><td>10.2</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Erratic early output and tougher NYG shell; better to avoid 1Q passing overs here.</td></tr>
-      </tbody>
+      <thead><tr><th>Team</th><th>QB Player</th><th>Opponent</th><th>Adj_Eff</th><th>Success%</th><th>Explosive%</th><th>Pass Rate Neutral%</th><th>aDOT</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th></tr></thead>
+      <tbody><tr><td>GB</td><td>J.Love</td><td>DET</td><td>0.4</td><td>58.3%</td><td>8.3%</td><td>46.2%</td><td>6.1</td><td>30</td><td><div class='grade-wrap'><span class='grade'>68.7</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Middle‑tier 1Q passing — 0.44 EPA/play and 46.2% neutral pass rate. Script likely decides it versus a 30/100 pass defense.</td></tr>
+<tr><td>DET</td><td>J.Goff</td><td>GB</td><td>0.1</td><td>55.0%</td><td>20.0%</td><td>62.5%</td><td>6.3</td><td>33</td><td><div class='grade-wrap'><span class='grade'>78.0</span><span class='badge badge-steady'>C+</span></div></td><td class='just'>Middle‑tier 1Q passing — 0.08 EPA/play and 62.5% neutral pass rate. Script likely decides it versus a 33/100 pass defense.</td></tr>
+<tr><td>KC</td><td>P.Mahomes</td><td>DAL</td><td>-1.1</td><td>18.2%</td><td>9.1%</td><td>73.3%</td><td>17.8</td><td>39</td><td><div class='grade-wrap'><span class='grade'>9.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-1.07 EPA/play) into a difficult look (defense 39/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>DAL</td><td>D.Prescott</td><td>KC</td><td>-0.7</td><td>30.4%</td><td>17.4%</td><td>59.0%</td><td>7.5</td><td>50</td><td><div class='grade-wrap'><span class='grade'>30.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.69 EPA/play) into a difficult look (defense 50/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>CIN</td><td>J.Flacco</td><td>BAL</td><td>0.1</td><td>55.6%</td><td>5.6%</td><td>47.4%</td><td>6.6</td><td>39</td><td><div class='grade-wrap'><span class='grade'>51.7</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.08 EPA/play) into a difficult look (defense 39/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>BAL</td><td>L.Jackson</td><td>CIN</td><td>-0.1</td><td>44.4%</td><td>5.6%</td><td>52.9%</td><td>7.1</td><td>35</td><td><div class='grade-wrap'><span class='grade'>43.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.06 EPA/play) into a difficult look (defense 35/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>CHI</td><td>C.Williams</td><td>PHI</td><td>-0.1</td><td>36.4%</td><td>18.2%</td><td>53.7%</td><td>12.1</td><td>70</td><td><div class='grade-wrap'><span class='grade'>47.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.05 EPA/play) into a difficult look (defense 70/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>PHI</td><td>J.Hurts</td><td>CHI</td><td>0.2</td><td>45.5%</td><td>4.5%</td><td>57.9%</td><td>6.5</td><td>65</td><td><div class='grade-wrap'><span class='grade'>45.6</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.17 EPA/play) into a difficult look (defense 65/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>SF</td><td>B.Purdy</td><td>CLE</td><td>0.5</td><td>50.0%</td><td>0.0%</td><td>47.1%</td><td>2.2</td><td>61</td><td><div class='grade-wrap'><span class='grade'>49.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.52 EPA/play) into a difficult look (defense 61/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>CLE</td><td>D.Gabriel</td><td>SF</td><td>0.3</td><td>31.6%</td><td>10.5%</td><td>50.0%</td><td>3.5</td><td>33</td><td><div class='grade-wrap'><span class='grade'>49.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.28 EPA/play) into a difficult look (defense 33/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>JAX</td><td>T.Lawrence</td><td>TEN</td><td>0.2</td><td>47.8%</td><td>13.0%</td><td>48.9%</td><td>8.3</td><td>57</td><td><div class='grade-wrap'><span class='grade'>57.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.23 EPA/play) into a difficult look (defense 57/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>TEN</td><td>C.Ward</td><td>JAX</td><td>0.1</td><td>50.0%</td><td>15.4%</td><td>57.8%</td><td>7.9</td><td>65</td><td><div class='grade-wrap'><span class='grade'>61.3</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Volatile early passing with thin efficiency (0.13 EPA/play). Tough matchup (defense 65/100) suggests caution on 1Q overs.</td></tr>
+<tr><td>HOU</td><td>D.Mills</td><td>IND</td><td>-0.2</td><td>34.5%</td><td>6.9%</td><td>70.7%</td><td>8.4</td><td>75</td><td><div class='grade-wrap'><span class='grade'>34.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.17 EPA/play) into a difficult look (defense 75/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>IND</td><td>D.Jones</td><td>HOU</td><td>0.2</td><td>45.2%</td><td>16.1%</td><td>63.3%</td><td>7.5</td><td>47</td><td><div class='grade-wrap'><span class='grade'>65.9</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Volatile early passing with thin efficiency (0.17 EPA/play). Tough matchup (defense 47/100) suggests caution on 1Q overs.</td></tr>
+<tr><td>NO</td><td>S.Rattler</td><td>MIA</td><td>-0.5</td><td>38.9%</td><td>0.0%</td><td>60.0%</td><td>2.3</td><td>33</td><td><div class='grade-wrap'><span class='grade'>24.7</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.45 EPA/play) into a difficult look (defense 33/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>MIA</td><td>T.Tagovailoa</td><td>NO</td><td>-0.0</td><td>47.4%</td><td>15.8%</td><td>40.4%</td><td>7.7</td><td>50</td><td><div class='grade-wrap'><span class='grade'>51.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.00 EPA/play) into a difficult look (defense 50/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>ATL</td><td>M.Penix</td><td>NYJ</td><td>-1.3</td><td>16.7%</td><td>8.3%</td><td>57.1%</td><td>8.4</td><td>42</td><td><div class='grade-wrap'><span class='grade'>0.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-1.29 EPA/play) into a difficult look (defense 42/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>NYJ</td><td>J.Fields</td><td>ATL</td><td>0.1</td><td>54.5%</td><td>9.1%</td><td>33.3%</td><td>4.8</td><td>33</td><td><div class='grade-wrap'><span class='grade'>51.5</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.12 EPA/play) into a difficult look (defense 33/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>ARI</td><td>J.Brissett</td><td>TB</td><td>0.2</td><td>43.8%</td><td>12.5%</td><td>66.7%</td><td>7.1</td><td>56</td><td><div class='grade-wrap'><span class='grade'>61.4</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Volatile early passing with thin efficiency (0.21 EPA/play). Tough matchup (defense 56/100) suggests caution on 1Q overs.</td></tr>
+<tr><td>TB</td><td>B.Mayfield</td><td>ARI</td><td>-0.4</td><td>38.5%</td><td>15.4%</td><td>41.9%</td><td>9.7</td><td>38</td><td><div class='grade-wrap'><span class='grade'>36.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.38 EPA/play) into a difficult look (defense 38/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>LA</td><td>M.Stafford</td><td>CAR</td><td>0.4</td><td>60.7%</td><td>17.9%</td><td>65.1%</td><td>6.3</td><td>38</td><td><div class='grade-wrap'><span class='grade'>88.4</span><span class='badge badge-edge'>B+</span></div></td><td class='just'>Solid early‑script passing: 0.40 EPA/play with 65.1% neutral pass rate. Opponent difficulty 38/100 tempers it, but 17.9% explosives keep the 1Q over live.</td></tr>
+<tr><td>CAR</td><td>B.Young</td><td>LA</td><td>0.5</td><td>48.0%</td><td>20.0%</td><td>58.1%</td><td>6.2</td><td>89</td><td><div class='grade-wrap'><span class='grade'>71.4</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Middle‑tier 1Q passing — 0.49 EPA/play and 58.1% neutral pass rate. Script likely decides it versus a 89/100 pass defense.</td></tr>
+<tr><td>MIN</td><td>J.McCarthy</td><td>SEA</td><td>0.2</td><td>45.5%</td><td>18.2%</td><td>56.4%</td><td>9.2</td><td>59</td><td><div class='grade-wrap'><span class='grade'>65.5</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Volatile early passing with thin efficiency (0.24 EPA/play). Tough matchup (defense 59/100) suggests caution on 1Q overs.</td></tr>
+<tr><td>SEA</td><td>S.Darnold</td><td>MIN</td><td>0.3</td><td>61.1%</td><td>5.6%</td><td>58.1%</td><td>6.2</td><td>44</td><td><div class='grade-wrap'><span class='grade'>66.5</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Volatile early passing with thin efficiency (0.32 EPA/play). Tough matchup (defense 44/100) suggests caution on 1Q overs.</td></tr>
+<tr><td>BUF</td><td>J.Allen</td><td>PIT</td><td>-0.0</td><td>33.3%</td><td>4.2%</td><td>60.0%</td><td>4.3</td><td>47</td><td><div class='grade-wrap'><span class='grade'>35.8</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.01 EPA/play) into a difficult look (defense 47/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>PIT</td><td>A.Rodgers</td><td>BUF</td><td>-0.3</td><td>26.7%</td><td>13.3%</td><td>50.0%</td><td>8.0</td><td>66</td><td><div class='grade-wrap'><span class='grade'>25.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.34 EPA/play) into a difficult look (defense 66/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>LV</td><td>G.Smith</td><td>LAC</td><td>-0.2</td><td>37.9%</td><td>13.8%</td><td>70.7%</td><td>4.7</td><td>65</td><td><div class='grade-wrap'><span class='grade'>46.8</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.22 EPA/play) into a difficult look (defense 65/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>LAC</td><td>J.Herbert</td><td>LV</td><td>-0.3</td><td>33.3%</td><td>7.4%</td><td>62.8%</td><td>5.0</td><td>70</td><td><div class='grade-wrap'><span class='grade'>28.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.32 EPA/play) into a difficult look (defense 70/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>DEN</td><td>B.Nix</td><td>WAS</td><td>-0.2</td><td>36.8%</td><td>10.5%</td><td>54.3%</td><td>11.4</td><td>27</td><td><div class='grade-wrap'><span class='grade'>41.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (-0.24 EPA/play) into a difficult look (defense 27/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>WAS</td><td>M.Mariota</td><td>DEN</td><td>0.0</td><td>57.1%</td><td>9.5%</td><td>55.3%</td><td>6.1</td><td>45</td><td><div class='grade-wrap'><span class='grade'>58.7</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Poor recent 1Q passing (0.02 EPA/play) into a difficult look (defense 45/100). Usually a stay‑away for 1Q overs.</td></tr>
+<tr><td>NYG</td><td>J.Dart</td><td>NE</td><td>0.6</td><td>50.0%</td><td>27.8%</td><td>54.5%</td><td>7.8</td><td>42</td><td><div class='grade-wrap'><span class='grade'>93.3</span><span class='badge badge-elite'>A</span></div></td><td class='just'>NYG has been sharp early with adjusted 1Q pass efficiency at 0.59 EPA/play and a 54.5% neutral pass rate. The matchup reads favorable (defense 42/100), and 27.8% explosives support an attack‑the‑over stance.</td></tr>
+<tr><td>NE</td><td>D.Maye</td><td>NYG</td><td>0.2</td><td>50.0%</td><td>20.0%</td><td>52.6%</td><td>9.0</td><td>55</td><td><div class='grade-wrap'><span class='grade'>69.9</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Middle‑tier 1Q passing — 0.24 EPA/play and 52.6% neutral pass rate. Script likely decides it versus a 55/100 pass defense.</td></tr></tbody>
     </table>
   </div>
 
@@ -486,19 +120,39 @@
       <div class="func-label">Function: 1Q Over Rushing Yards</div>
     </div>
     <table id="table-rush">
-      <thead>
-        <tr>
-          <th>Player</th><th>Position</th><th>Opponent</th><th>Adj_Eff</th>
-          <th>Success%</th><th>Explosive%</th><th>YAC/att</th>
-          <th>Carries</th><th>Def 1Q Rush</th><th>Grade</th><th>Justification</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- RUSH ROWS (auto-filled by your GPT) -->
-        <tr><td>J.Jacobs</td><td>RB</td><td>DET</td><td>0.0</td><td>52.3%</td><td>16.3%</td><td>0.0</td><td>7.0</td><td>67</td><td><div class="grade-wrap"><span class="grade">64.3</span><span class="badge badge-highrisk">D</span></div></td><td>Solid efficiency but stiff front; 1Q over needs script cooperation and clean red-zone drive.</td></tr>
-        <!-- ... all your existing RUSH rows unchanged ... -->
-        <tr><td>T.Henderson</td><td>RB</td><td>NYG</td><td>-0.0</td><td>54.8%</td><td>10.0%</td><td>0.0</td><td>6.2</td><td>1</td><td><div class="grade-wrap"><span class="grade">49.3</span><span class="badge badge-volatile">F</span></div></td><td>Role and blocking are too shaky early; 1Q rushing overs here are mostly dart throws.</td></tr>
-      </tbody>
+      <thead><tr><th>Player</th><th>Position</th><th>Opponent</th><th>Adj_Eff</th><th>Success%</th><th>Explosive%</th><th>YAC/att</th><th>Carries</th><th>Def 1Q Rush</th><th>Grade</th><th>Justification</th></tr></thead>
+      <tbody><tr><td>J.Jacobs (GB)</td><td>RB</td><td>DET</td><td>-0.1</td><td>42.9%</td><td>14.3%</td><td>0.0</td><td>1.8</td><td>65</td><td><div class='grade-wrap'><span class='grade'>43.5</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.10 EPA/play) and low explosives. Into a 65/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Gibbs (DET)</td><td>RB</td><td>GB</td><td>0.1</td><td>66.7%</td><td>0.0%</td><td>0.0</td><td>1.5</td><td>52</td><td><div class='grade-wrap'><span class='grade'>51.7</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.11 EPA/play) and low explosives. Into a 52/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>K.Hunt (KC)</td><td>RB</td><td>DAL</td><td>1.0</td><td>50.0%</td><td>0.0%</td><td>0.0</td><td>0.5</td><td>57</td><td><div class='grade-wrap'><span class='grade'>72.3</span><span class='badge badge-steady'>C</span></div></td><td class='just'>Steady but unspectacular — 0.5 carries and 0.96 EPA/play. Outcome hinges on early drives vs a 57/100 run defense.</td></tr>
+<tr><td>J.Williams (DAL)</td><td>RB</td><td>KC</td><td>0.1</td><td>56.2%</td><td>6.2%</td><td>0.0</td><td>4.0</td><td>49</td><td><div class='grade-wrap'><span class='grade'>62.2</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Thin 1Q rushing efficiency (0.07 EPA/play) with limited volume (4.0). A 49/100 run defense caps upside — tread lightly.</td></tr>
+<tr><td>C.Brown (CIN)</td><td>RB</td><td>BAL</td><td>0.1</td><td>50.0%</td><td>21.4%</td><td>0.0</td><td>3.5</td><td>62</td><td><div class='grade-wrap'><span class='grade'>68.8</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Steady but unspectacular — 3.5 carries and 0.09 EPA/play. Outcome hinges on early drives vs a 62/100 run defense.</td></tr>
+<tr><td>D.Henry (BAL)</td><td>RB</td><td>CIN</td><td>-0.2</td><td>40.0%</td><td>0.0%</td><td>0.0</td><td>2.5</td><td>53</td><td><div class='grade-wrap'><span class='grade'>31.6</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.17 EPA/play) and low explosives. Into a 53/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>K.Monangai (CHI)</td><td>RB</td><td>PHI</td><td>0.2</td><td>50.0%</td><td>8.3%</td><td>0.0</td><td>3.0</td><td>67</td><td><div class='grade-wrap'><span class='grade'>58.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.22 EPA/play) and low explosives. Into a 67/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>S.Barkley (PHI)</td><td>RB</td><td>CHI</td><td>0.2</td><td>25.0%</td><td>25.0%</td><td>0.0</td><td>3.0</td><td>48</td><td><div class='grade-wrap'><span class='grade'>66.7</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Thin 1Q rushing efficiency (0.24 EPA/play) with limited volume (3.0). A 48/100 run defense caps upside — tread lightly.</td></tr>
+<tr><td>C.McCaffrey (SF)</td><td>RB</td><td>CLE</td><td>0.3</td><td>57.1%</td><td>0.0%</td><td>0.0</td><td>1.8</td><td>61</td><td><div class='grade-wrap'><span class='grade'>53.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.29 EPA/play) and low explosives. Into a 61/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>Q.Judkins (CLE)</td><td>RB</td><td>SF</td><td>-0.2</td><td>33.3%</td><td>13.3%</td><td>0.0</td><td>3.8</td><td>24</td><td><div class='grade-wrap'><span class='grade'>52.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.16 EPA/play) and low explosives. Into a 24/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Etienne (JAX)</td><td>RB</td><td>TEN</td><td>0.2</td><td>44.4%</td><td>16.7%</td><td>0.0</td><td>4.5</td><td>45</td><td><div class='grade-wrap'><span class='grade'>71.9</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Steady but unspectacular — 4.5 carries and 0.15 EPA/play. Outcome hinges on early drives vs a 45/100 run defense.</td></tr>
+<tr><td>T.Pollard (TEN)</td><td>RB</td><td>JAX</td><td>-0.0</td><td>30.8%</td><td>23.1%</td><td>0.0</td><td>3.2</td><td>63</td><td><div class='grade-wrap'><span class='grade'>54.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.04 EPA/play) and low explosives. Into a 63/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>W.Marks (HOU)</td><td>RB</td><td>IND</td><td>-0.5</td><td>12.5%</td><td>0.0%</td><td>0.0</td><td>2.0</td><td>41</td><td><div class='grade-wrap'><span class='grade'>6.8</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.47 EPA/play) and low explosives. Into a 41/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Taylor (IND)</td><td>RB</td><td>HOU</td><td>0.3</td><td>56.2%</td><td>18.8%</td><td>0.0</td><td>4.0</td><td>27</td><td><div class='grade-wrap'><span class='grade'>88.7</span><span class='badge badge-edge'>B+</span></div></td><td class='just'>Reliable early carries (4.0) and 0.35 EPA/play. At 18.8% explosive rate, this stays in the 1Q over zone unless script flips.</td></tr>
+<tr><td>A.Kamara (NO)</td><td>RB</td><td>MIA</td><td>-0.2</td><td>37.5%</td><td>0.0%</td><td>0.0</td><td>2.0</td><td>87</td><td><div class='grade-wrap'><span class='grade'>21.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.18 EPA/play) and low explosives. Into a 87/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>D.Achane (MIA)</td><td>RB</td><td>NO</td><td>0.2</td><td>73.3%</td><td>26.7%</td><td>0.0</td><td>3.8</td><td>46</td><td><div class='grade-wrap'><span class='grade'>94.4</span><span class='badge badge-elite'>A</span></div></td><td class='just'>Ground game is humming at 0.22 EPA/play with 3.8 1Q carries. Defense grades 46/100 vs run; 26.7% explosives flag a green‑light over.</td></tr>
+<tr><td>B.Robinson (ATL)</td><td>RB</td><td>NYJ</td><td>-0.2</td><td>12.5%</td><td>12.5%</td><td>0.0</td><td>2.0</td><td>60</td><td><div class='grade-wrap'><span class='grade'>23.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.24 EPA/play) and low explosives. Into a 60/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>B.Hall (NYJ)</td><td>RB</td><td>ATL</td><td>-0.4</td><td>27.3%</td><td>9.1%</td><td>0.0</td><td>2.8</td><td>60</td><td><div class='grade-wrap'><span class='grade'>24.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.40 EPA/play) and low explosives. Into a 60/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>Z.Knight (ARI)</td><td>RB</td><td>TB</td><td>-0.5</td><td>20.0%</td><td>0.0%</td><td>0.0</td><td>1.2</td><td>48</td><td><div class='grade-wrap'><span class='grade'>6.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.45 EPA/play) and low explosives. Into a 48/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>R.White (TB)</td><td>RB</td><td>ARI</td><td>0.0</td><td>41.7%</td><td>8.3%</td><td>0.0</td><td>3.0</td><td>40</td><td><div class='grade-wrap'><span class='grade'>51.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.01 EPA/play) and low explosives. Into a 40/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>K.Williams (LA)</td><td>RB</td><td>CAR</td><td>0.5</td><td>58.3%</td><td>16.7%</td><td>0.0</td><td>3.0</td><td>52</td><td><div class='grade-wrap'><span class='grade'>85.4</span><span class='badge badge-edge'>B</span></div></td><td class='just'>Reliable early carries (3.0) and 0.52 EPA/play. At 16.7% explosive rate, this stays in the 1Q over zone unless script flips.</td></tr>
+<tr><td>R.Dowdle (CAR)</td><td>RB</td><td>LA</td><td>-0.2</td><td>26.7%</td><td>0.0%</td><td>0.0</td><td>3.8</td><td>54</td><td><div class='grade-wrap'><span class='grade'>29.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.20 EPA/play) and low explosives. Into a 54/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>A.Jones (MIN)</td><td>RB</td><td>SEA</td><td>0.1</td><td>50.0%</td><td>18.8%</td><td>0.0</td><td>4.0</td><td>62</td><td><div class='grade-wrap'><span class='grade'>68.9</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Steady but unspectacular — 4.0 carries and 0.10 EPA/play. Outcome hinges on early drives vs a 62/100 run defense.</td></tr>
+<tr><td>K.Walker (SEA)</td><td>RB</td><td>MIN</td><td>0.2</td><td>66.7%</td><td>22.2%</td><td>0.0</td><td>2.2</td><td>71</td><td><div class='grade-wrap'><span class='grade'>74.4</span><span class='badge badge-steady'>C</span></div></td><td class='just'>Steady but unspectacular — 2.2 carries and 0.19 EPA/play. Outcome hinges on early drives vs a 71/100 run defense.</td></tr>
+<tr><td>J.Cook (BUF)</td><td>RB</td><td>PIT</td><td>0.1</td><td>33.3%</td><td>16.7%</td><td>0.0</td><td>3.0</td><td>37</td><td><div class='grade-wrap'><span class='grade'>59.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.08 EPA/play) and low explosives. Into a 37/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Warren (PIT)</td><td>RB</td><td>BUF</td><td>0.2</td><td>25.0%</td><td>12.5%</td><td>0.0</td><td>2.0</td><td>27</td><td><div class='grade-wrap'><span class='grade'>52.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.17 EPA/play) and low explosives. Into a 27/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>A.Jeanty (LV)</td><td>RB</td><td>LAC</td><td>0.0</td><td>45.5%</td><td>9.1%</td><td>0.0</td><td>2.8</td><td>69</td><td><div class='grade-wrap'><span class='grade'>48.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (0.03 EPA/play) and low explosives. Into a 69/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>K.Vidal (LAC)</td><td>RB</td><td>LV</td><td>-0.4</td><td>27.3%</td><td>0.0%</td><td>0.0</td><td>2.8</td><td>46</td><td><div class='grade-wrap'><span class='grade'>20.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.35 EPA/play) and low explosives. Into a 46/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Dobbins (DEN)</td><td>RB</td><td>WAS</td><td>0.0</td><td>62.5%</td><td>12.5%</td><td>0.0</td><td>2.0</td><td>24</td><td><div class='grade-wrap'><span class='grade'>65.8</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Thin 1Q rushing efficiency (0.03 EPA/play) with limited volume (2.0). A 24/100 run defense caps upside — tread lightly.</td></tr>
+<tr><td>C.Rodriguez (WAS)</td><td>RB</td><td>DEN</td><td>-0.3</td><td>37.5%</td><td>0.0%</td><td>0.0</td><td>2.0</td><td>41</td><td><div class='grade-wrap'><span class='grade'>27.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.26 EPA/play) and low explosives. Into a 41/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Tracy (NYG)</td><td>RB</td><td>NE</td><td>-0.5</td><td>20.0%</td><td>0.0%</td><td>0.0</td><td>2.5</td><td>31</td><td><div class='grade-wrap'><span class='grade'>13.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.50 EPA/play) and low explosives. Into a 31/100 defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Henderson (NE)</td><td>RB</td><td>NYG</td><td>-0.0</td><td>66.7%</td><td>0.0%</td><td>0.0</td><td>1.5</td><td>32</td><td><div class='grade-wrap'><span class='grade'>51.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Negative 1Q rushing trend (-0.00 EPA/play) and low explosives. Into a 32/100 defense, overs are thin outcomes.</td></tr></tbody>
     </table>
   </div>
 
@@ -509,26 +163,45 @@
       <div class="func-label">Function: 1Q Over Receiving Yards</div>
     </div>
     <table id="table-rec">
-      <thead>
-        <tr>
-          <th>Player</th><th>Team</th><th>Position</th><th>Opponent</th>
-          <th>YPRR</th><th>TPRR</th><th>Explosive%</th>
-          <th>aDOT</th><th>Catch% vs Exp</th><th>Def 1Q Pass</th>
-          <th>Grade</th><th>Justification</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- REC ROWS (auto-filled by your GPT) -->
-        <tr><td>C.Watson</td><td>GB</td><td>WR</td><td>DET</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>20.4</td><td>-9.9%</td><td>9</td><td><div class="grade-wrap"><span class="grade">35.1</span><span class="badge badge-volatile">F</span></div></td><td>Sporadic early targets and catch issues; 1Q overs hinge on a single deep shot vs DET.</td></tr>
-        <!-- ... all your existing REC rows unchanged ... -->
-        <tr><td>S.Diggs</td><td>NE</td><td>WR</td><td>NYG</td><td>1.3</td><td>0.2</td><td>0.0%</td><td>10.8</td><td>17.2%</td><td>36</td><td><div class="grade-wrap"><span class="grade">55.2</span><span class="badge badge-volatile">F</span></div></td><td>Volume and matchup don’t fully align; better used as context than a 1Q over target vs NYG.</td></tr>
-      </tbody>
+      <thead><tr><th>Player</th><th>Team</th><th>Position</th><th>Opponent</th><th>YPRR</th><th>TPRR</th><th>Explosive%</th><th>aDOT</th><th>Catch% vs Exp</th><th>Def 1Q Pass</th><th>Grade</th><th>Justification</th></tr></thead>
+      <tbody><tr><td>J.Jacobs</td><td>GB</td><td>WR/TE</td><td>DET</td><td>1.2</td><td>0.2</td><td>0.0%</td><td>-5.0</td><td>0.0</td><td>30</td><td><div class='grade-wrap'><span class='grade'>19.5</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.18). Into a stiff 30/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Williams</td><td>DET</td><td>WR/TE</td><td>GB</td><td>1.7</td><td>0.2</td><td>25.0%</td><td>7.2</td><td>0.0</td><td>33</td><td><div class='grade-wrap'><span class='grade'>46.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.72). Into a stiff 33/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>X.Worthy</td><td>KC</td><td>WR/TE</td><td>DAL</td><td>2.7</td><td>0.3</td><td>33.3%</td><td>29.3</td><td>0.0</td><td>39</td><td><div class='grade-wrap'><span class='grade'>77.3</span><span class='badge badge-steady'>C+</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~30.0% and YPRR 2.70. Matchup grade 39/100 suggests a fairly priced market.</td></tr>
+<tr><td>G.Pickens</td><td>DAL</td><td>WR/TE</td><td>KC</td><td>1.9</td><td>0.2</td><td>20.0%</td><td>11.0</td><td>0.0</td><td>50</td><td><div class='grade-wrap'><span class='grade'>44.4</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.86). Into a stiff 50/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Chase</td><td>CIN</td><td>WR/TE</td><td>BAL</td><td>0.9</td><td>0.2</td><td>0.0%</td><td>4.8</td><td>0.0</td><td>39</td><td><div class='grade-wrap'><span class='grade'>26.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.94). Into a stiff 39/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>I.Likely</td><td>BAL</td><td>WR/TE</td><td>CIN</td><td>0.4</td><td>0.2</td><td>0.0%</td><td>12.2</td><td>0.0</td><td>35</td><td><div class='grade-wrap'><span class='grade'>25.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.35). Into a stiff 35/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>D.Moore</td><td>CHI</td><td>WR/TE</td><td>PHI</td><td>0.3</td><td>0.3</td><td>0.0%</td><td>17.8</td><td>0.0</td><td>70</td><td><div class='grade-wrap'><span class='grade'>23.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.26). Into a stiff 70/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>A.Brown</td><td>PHI</td><td>WR/TE</td><td>CHI</td><td>3.1</td><td>0.5</td><td>11.1%</td><td>7.8</td><td>0.0</td><td>65</td><td><div class='grade-wrap'><span class='grade'>68.0</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~47.4% and YPRR 3.11. Matchup grade 65/100 suggests a fairly priced market.</td></tr>
+<tr><td>C.McCaffrey</td><td>SF</td><td>WR/TE</td><td>CLE</td><td>1.7</td><td>0.4</td><td>0.0%</td><td>1.0</td><td>0.0</td><td>61</td><td><div class='grade-wrap'><span class='grade'>43.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.71). Into a stiff 61/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>H.Fannin</td><td>CLE</td><td>WR/TE</td><td>SF</td><td>2.3</td><td>0.4</td><td>33.3%</td><td>3.3</td><td>0.0</td><td>33</td><td><div class='grade-wrap'><span class='grade'>64.9</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Muted 1Q role (TPRR ~35.3%) and middling YPRR 2.29. Against a 33/100 defense, the over requires a perfect script.</td></tr>
+<tr><td>P.Washington</td><td>JAX</td><td>WR/TE</td><td>TEN</td><td>1.4</td><td>0.2</td><td>0.0%</td><td>5.0</td><td>0.0</td><td>57</td><td><div class='grade-wrap'><span class='grade'>27.2</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.35). Into a stiff 57/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>C.Dike</td><td>TEN</td><td>WR/TE</td><td>JAX</td><td>1.8</td><td>0.3</td><td>14.3%</td><td>10.3</td><td>0.0</td><td>65</td><td><div class='grade-wrap'><span class='grade'>42.5</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.84). Into a stiff 65/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>C.Kirk</td><td>HOU</td><td>WR/TE</td><td>IND</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>4.0</td><td>0.0</td><td>75</td><td><div class='grade-wrap'><span class='grade'>17.5</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.75). Into a stiff 75/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>A.Pierce</td><td>IND</td><td>WR/TE</td><td>HOU</td><td>4.6</td><td>0.2</td><td>57.1%</td><td>18.3</td><td>0.0</td><td>47</td><td><div class='grade-wrap'><span class='grade'>94.3</span><span class='badge badge-elite'>A</span></div></td><td class='just'>High‑leverage first‑read usage (TPRR ~25.0%) with YPRR 4.64. Explosive share 57.1% and a beatable 47/100 pass defense make this a prime 1Q over look.</td></tr>
+<tr><td>R.Shaheed</td><td>NO</td><td>WR/TE</td><td>MIA</td><td>1.4</td><td>0.2</td><td>0.0%</td><td>7.3</td><td>0.0</td><td>33</td><td><div class='grade-wrap'><span class='grade'>26.8</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.44). Into a stiff 33/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>D.Achane</td><td>MIA</td><td>WR/TE</td><td>NO</td><td>1.7</td><td>0.3</td><td>16.7%</td><td>2.8</td><td>0.0</td><td>50</td><td><div class='grade-wrap'><span class='grade'>46.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.72). Into a stiff 50/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>D.Mooney</td><td>ATL</td><td>WR/TE</td><td>NYJ</td><td>1.3</td><td>0.2</td><td>33.3%</td><td>14.7</td><td>0.0</td><td>42</td><td><div class='grade-wrap'><span class='grade'>48.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.29). Into a stiff 42/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>A.Mitchell</td><td>NYJ</td><td>WR/TE</td><td>ATL</td><td>2.9</td><td>0.3</td><td>33.3%</td><td>14.3</td><td>0.0</td><td>33</td><td><div class='grade-wrap'><span class='grade'>74.6</span><span class='badge badge-steady'>C</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~33.3% and YPRR 2.89. Matchup grade 33/100 suggests a fairly priced market.</td></tr>
+<tr><td>M.Harrison</td><td>ARI</td><td>WR/TE</td><td>TB</td><td>2.2</td><td>0.3</td><td>50.0%</td><td>12.8</td><td>0.0</td><td>56</td><td><div class='grade-wrap'><span class='grade'>65.3</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Muted 1Q role (TPRR ~26.7%) and middling YPRR 2.20. Against a 56/100 defense, the over requires a perfect script.</td></tr>
+<tr><td>E.Egbuka</td><td>TB</td><td>WR/TE</td><td>ARI</td><td>4.5</td><td>0.6</td><td>28.6%</td><td>11.0</td><td>0.0</td><td>38</td><td><div class='grade-wrap'><span class='grade'>100.0</span><span class='badge badge-elite'>A+</span></div></td><td class='just'>High‑leverage first‑read usage (TPRR ~58.3%) with YPRR 4.50. Explosive share 28.6% and a beatable 38/100 pass defense make this a prime 1Q over look.</td></tr>
+<tr><td>P.Nacua</td><td>LA</td><td>WR/TE</td><td>CAR</td><td>3.6</td><td>0.3</td><td>22.2%</td><td>6.9</td><td>0.0</td><td>38</td><td><div class='grade-wrap'><span class='grade'>71.8</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~34.6% and YPRR 3.62. Matchup grade 38/100 suggests a fairly priced market.</td></tr>
+<tr><td>T.McMillan</td><td>CAR</td><td>WR/TE</td><td>LA</td><td>3.6</td><td>0.3</td><td>37.5%</td><td>10.5</td><td>0.0</td><td>89</td><td><div class='grade-wrap'><span class='grade'>71.1</span><span class='badge badge-steady'>C−</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~34.8% and YPRR 3.61. Matchup grade 89/100 suggests a fairly priced market.</td></tr>
+<tr><td>A.Jones</td><td>MIN</td><td>WR/TE</td><td>SEA</td><td>0.7</td><td>0.3</td><td>0.0%</td><td>2.3</td><td>0.0</td><td>59</td><td><div class='grade-wrap'><span class='grade'>25.1</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.68). Into a stiff 59/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>J.Smith-Njigba</td><td>SEA</td><td>WR/TE</td><td>MIN</td><td>5.4</td><td>0.3</td><td>20.0%</td><td>13.6</td><td>0.0</td><td>44</td><td><div class='grade-wrap'><span class='grade'>86.2</span><span class='badge badge-edge'>B</span></div></td><td class='just'>Stable early involvement (TPRR ~31.2%) and YPRR 5.38. 20.0% explosives keep the over in play unless coverage tilts away.</td></tr>
+<tr><td>K.Shakir</td><td>BUF</td><td>WR/TE</td><td>PIT</td><td>0.8</td><td>0.2</td><td>0.0%</td><td>-0.8</td><td>0.0</td><td>47</td><td><div class='grade-wrap'><span class='grade'>20.0</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.81). Into a stiff 47/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>D.Metcalf</td><td>PIT</td><td>WR/TE</td><td>BUF</td><td>3.3</td><td>0.4</td><td>33.3%</td><td>15.5</td><td>0.0</td><td>66</td><td><div class='grade-wrap'><span class='grade'>80.8</span><span class='badge badge-edge'>B−</span></div></td><td class='just'>Stable early involvement (TPRR ~42.9%) and YPRR 3.29. 33.3% explosives keep the over in play unless coverage tilts away.</td></tr>
+<tr><td>T.Tucker</td><td>LV</td><td>WR/TE</td><td>LAC</td><td>-0.0</td><td>0.2</td><td>0.0%</td><td>11.8</td><td>0.0</td><td>65</td><td><div class='grade-wrap'><span class='grade'>10.6</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR -0.04). Into a stiff 65/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>O.Gadsden</td><td>LAC</td><td>WR/TE</td><td>LV</td><td>2.0</td><td>0.3</td><td>0.0%</td><td>7.0</td><td>0.0</td><td>70</td><td><div class='grade-wrap'><span class='grade'>33.9</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 1.96). Into a stiff 70/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Franklin</td><td>DEN</td><td>WR/TE</td><td>WAS</td><td>1.9</td><td>0.3</td><td>20.0%</td><td>24.4</td><td>0.0</td><td>27</td><td><div class='grade-wrap'><span class='grade'>61.6</span><span class='badge badge-highrisk'>D</span></div></td><td class='just'>Muted 1Q role (TPRR ~27.8%) and middling YPRR 1.94. Against a 27/100 defense, the over requires a perfect script.</td></tr>
+<tr><td>D.Samuel</td><td>WAS</td><td>WR/TE</td><td>DEN</td><td>0.9</td><td>0.2</td><td>0.0%</td><td>0.8</td><td>0.0</td><td>45</td><td><div class='grade-wrap'><span class='grade'>20.6</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 0.89). Into a stiff 45/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Johnson</td><td>NYG</td><td>WR/TE</td><td>NE</td><td>2.2</td><td>0.3</td><td>20.0%</td><td>7.8</td><td>0.0</td><td>42</td><td><div class='grade-wrap'><span class='grade'>53.3</span><span class='badge badge-volatile'>F</span></div></td><td class='just'>Low early usage and efficiency (YPRR 2.24). Into a stiff 42/100 pass defense, overs are thin outcomes.</td></tr>
+<tr><td>T.Henderson</td><td>NE</td><td>WR/TE</td><td>NYG</td><td>3.8</td><td>0.4</td><td>25.0%</td><td>2.2</td><td>0.0</td><td>55</td><td><div class='grade-wrap'><span class='grade'>77.2</span><span class='badge badge-steady'>C+</span></div></td><td class='just'>Script‑sensitive profile — TPRR ~44.4% and YPRR 3.78. Matchup grade 55/100 suggests a fairly priced market.</td></tr></tbody>
     </table>
   </div>
 
   <div class="footer">
     <div>Odds window focus: +350 to −160.</div>
-    <div>Last updated: Nov 27, 2025 • 04:08 AM</div>
+    <div>Last updated: 2025-11-27 06:10</div>
   </div>
 
   <div class="glossary">
@@ -544,48 +217,62 @@
     TPRR – targets per route run.<br>
     Catch% vs Exp – catch rate vs expected.<br>
     Defense metrics – 0–100 difficulty score; higher = tougher.<br><br>
-
     <div class="glossary-title">Grade & Color Guide</div>
-    A / A− (Elite – <span style="color:#10b981;">green</span>, badge <code>badge-elite</code>) – explosive, efficient 1Q usage vs beatable matchups; our highest-confidence 1Q OVER spots when price is fair.<br>
-    B range (Edge – <span style="color:#3b82f6;">blue</span>, badge <code>badge-edge</code>) – strong 1Q profile or matchup edge with a bit more variance; good over candidates at the right number.<br>
-    C range (Steady – <span style="color:#f59e0b;">yellow</span>, badge <code>badge-steady</code>) – solid but not dominant 1Q output or tougher defenses; more “floor” than “ceiling,” best as context or supporting angles.<br>
-    D (High-Risk – red with orange tint, badge <code>badge-highrisk</code>) – thin or volatile 1Q sample, usage doubts, or hard matchup; only for aggressive or correlated builds, not core overs.<br>
-    F (Volatile – <span style="color:#ef4444;">red</span>, badge <code>badge-volatile</code>) – poor or inconsistent 1Q production into strong defenses or unclear roles; usually stay-away territory for 1Q OVERs.
+    A / A− (Elite, green) – explosive, efficient 1Q usage vs beatable matchups; these are our highest-confidence 1Q OVER spots when price is fair.<br>
+    B range (Edge, blue) – strong underlying 1Q profile or matchup edge with a little more variance; good candidates for overs when lines are reasonable.<br>
+    C range (Steady, yellow) – solid but not dominant 1Q production or tougher defenses; more “floor” than “ceiling” and better for context than for auto-bets.<br>
+    D (High-Risk, red‑orange) – volatile or thin 1Q sample, role concerns, or tough matchup; can still pop, but only for aggressive or correlated builds.<br>
+    F (Volatile, red) – poor or inconsistent 1Q production into strong defenses or unclear roles; best treated as stay-aways for 1Q OVERs in most cases.
   </div>
 </div>
-
-<!-- CSV EMBEDS (these get overwritten by your Custom GPT each run) -->
-<script id="data-pass-csv" type="text/plain" style="display:none">
-team,qb_player,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,pass_rate_neutral_1q,adot_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification
-GB,J.Love,DET,,4,-0.1,50.2%,5.0%,44.0%,7.0,9,35.1,F,"Volatile passing start into a tougher DET front; overs need broken plays or short fields."
-</script>
-
-<script id="data-rush-csv" type="text/plain" style="display:none">
-team_or_player,position,opponent,date_range,games_used,Adj_Eff,success_pct_1q,explosive_pct_1q,yac_per_att_1q,carries_1q,Defense_1Q_Rush,MLH_Grade,LetterBadge,justification
-J.Jacobs,RB,DET,,4,0.0,52.3%,16.3%,0.0,7.0,67,64.3,D,"Solid efficiency but stiff front; 1Q over needs script cooperation and clean red-zone drive."
-</script>
-
-<script id="data-rec-csv" type="text/plain" style="display:none">
-player,team,position,opponent,date_range,games_used,yprr_1q,tprr_1q,explosive_pct_1q,adot_1q,catch_pct_vs_exp_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification,estimated
-C.Watson,GB,WR,DET,,4,0.8,0.2,0.0%,20.4,-9.9%,9,35.1,F,"Sporadic early targets and catch issues; 1Q overs hinge on a single deep shot vs DET.",True
-A.St. Brown,DET,WR,GB,,4,1.9,0.2,33.3%,12.4,-7.1%,0,72.4,C,"Steady early role; 1Q over can get there through volume and red zone work vs GB.",True
-R.Rice,KC,WR,DAL,,4,1.9,0.4,9.1%,2.2,-6.2%,36,32.1,F,"Short-area role vs stiff DAL shell; 1Q overs need YAC or broken coverage to pop.",True
-<!-- … keep all your existing REC CSV rows here unchanged … -->
-S.Diggs,NE,WR,NYG,,4,1.3,0.2,0.0%,10.8,17.2%,36,55.2,F,"Volume and matchup don’t fully align; better used as context than a 1Q over target vs NYG.",True
+y:none"></script>
+<script id="data-rec-csv" type="text/plain" style="display:none">player,team,position,opponent,date_range,games_used,targets_1q,receptions_1q,yards_1q,yprr_1q,tprr_1q,adot_1q,explosive_pct_1q,catch_pct_vs_exp_1q,Defense_1Q_Pass,MLH_Grade,LetterBadge,justification,estimated
+J.Jacobs,GB,WR/TE,DET,2025-11-02–2025-11-23,4,2,2,13.0,1.2,0.2,-5.0,0.0%,0.0,30,19.5,F,"Low early usage and efficiency (YPRR 1.18). Into a stiff 30/100 pass defense, overs are thin outcomes.",True
+J.Williams,DET,WR/TE,GB,2025-11-02–2025-11-23,4,4,4,31.0,1.7,0.2,7.2,25.0%,0.0,33,46.4,F,"Low early usage and efficiency (YPRR 1.72). Into a stiff 33/100 pass defense, overs are thin outcomes.",True
+X.Worthy,KC,WR/TE,DAL,2025-10-27–2025-11-23,4,3,3,27.0,2.7,0.3,29.3,33.3%,0.0,39,77.3,C+,Script‑sensitive profile — TPRR ~30.0% and YPRR 2.70. Matchup grade 39/100 suggests a fairly priced market.,True
+G.Pickens,DAL,WR/TE,KC,2025-10-26–2025-11-23,4,5,5,41.0,1.9,0.2,11.0,20.0%,0.0,50,44.4,F,"Low early usage and efficiency (YPRR 1.86). Into a stiff 50/100 pass defense, overs are thin outcomes.",True
+J.Chase,CIN,WR/TE,BAL,2025-10-26–2025-11-23,4,4,4,15.0,0.9,0.2,4.8,0.0%,0.0,39,26.9,F,"Low early usage and efficiency (YPRR 0.94). Into a stiff 39/100 pass defense, overs are thin outcomes.",True
+I.Likely,BAL,WR/TE,CIN,2025-10-30–2025-11-23,4,4,4,6.0,0.4,0.2,12.2,0.0%,0.0,35,25.3,F,"Low early usage and efficiency (YPRR 0.35). Into a stiff 35/100 pass defense, overs are thin outcomes.",True
+D.Moore,CHI,WR/TE,PHI,2025-11-02–2025-11-23,4,5,5,5.0,0.3,0.3,17.8,0.0%,0.0,70,23.0,F,"Low early usage and efficiency (YPRR 0.26). Into a stiff 70/100 pass defense, overs are thin outcomes.",True
+A.Brown,PHI,WR/TE,CHI,2025-10-26–2025-11-23,4,9,9,59.0,3.1,0.5,7.8,11.1%,0.0,65,68.0,C−,Script‑sensitive profile — TPRR ~47.4% and YPRR 3.11. Matchup grade 65/100 suggests a fairly priced market.,True
+C.McCaffrey,SF,WR/TE,CLE,2025-11-02–2025-11-24,4,3,3,12.0,1.7,0.4,1.0,0.0%,0.0,61,43.2,F,"Low early usage and efficiency (YPRR 1.71). Into a stiff 61/100 pass defense, overs are thin outcomes.",True
+H.Fannin,CLE,WR/TE,SF,2025-10-26–2025-11-23,4,6,6,39.0,2.3,0.4,3.3,33.3%,0.0,33,64.9,D,"Muted 1Q role (TPRR ~35.3%) and middling YPRR 2.29. Against a 33/100 defense, the over requires a perfect script.",True
+P.Washington,JAX,WR/TE,TEN,2025-11-02–2025-11-23,4,5,5,27.0,1.4,0.2,5.0,0.0%,0.0,57,27.2,F,"Low early usage and efficiency (YPRR 1.35). Into a stiff 57/100 pass defense, overs are thin outcomes.",True
+C.Dike,TEN,WR/TE,JAX,2025-10-26–2025-11-23,4,7,7,46.0,1.8,0.3,10.3,14.3%,0.0,65,42.5,F,"Low early usage and efficiency (YPRR 1.84). Into a stiff 65/100 pass defense, overs are thin outcomes.",True
+C.Kirk,HOU,WR/TE,IND,2025-11-02–2025-11-20,4,7,7,21.0,0.8,0.2,4.0,0.0%,0.0,75,17.5,F,"Low early usage and efficiency (YPRR 0.75). Into a stiff 75/100 pass defense, overs are thin outcomes.",True
+A.Pierce,IND,WR/TE,HOU,2025-10-26–2025-11-23,4,7,7,130.0,4.6,0.2,18.3,57.1%,0.0,47,94.3,A,High‑leverage first‑read usage (TPRR ~25.0%) with YPRR 4.64. Explosive share 57.1% and a beatable 47/100 pass defense make this a prime 1Q over look.,True
+R.Shaheed,NO,WR/TE,MIA,2025-10-26–2025-11-23,4,3,3,26.0,1.4,0.2,7.3,0.0%,0.0,33,26.8,F,"Low early usage and efficiency (YPRR 1.44). Into a stiff 33/100 pass defense, overs are thin outcomes.",True
+D.Achane,MIA,WR/TE,NO,2025-10-26–2025-11-16,4,6,6,31.0,1.7,0.3,2.8,16.7%,0.0,50,46.3,F,"Low early usage and efficiency (YPRR 1.72). Into a stiff 50/100 pass defense, overs are thin outcomes.",True
+D.Mooney,ATL,WR/TE,NYJ,2025-11-02–2025-11-23,4,3,3,18.0,1.3,0.2,14.7,33.3%,0.0,42,48.1,F,"Low early usage and efficiency (YPRR 1.29). Into a stiff 42/100 pass defense, overs are thin outcomes.",True
+A.Mitchell,NYJ,WR/TE,ATL,2025-10-26–2025-11-23,4,3,3,26.0,2.9,0.3,14.3,33.3%,0.0,33,74.6,C,Script‑sensitive profile — TPRR ~33.3% and YPRR 2.89. Matchup grade 33/100 suggests a fairly priced market.,True
+M.Harrison,ARI,WR/TE,TB,2025-11-03–2025-11-23,4,4,4,33.0,2.2,0.3,12.8,50.0%,0.0,56,65.3,D,"Muted 1Q role (TPRR ~26.7%) and middling YPRR 2.20. Against a 56/100 defense, the over requires a perfect script.",True
+E.Egbuka,TB,WR/TE,ARI,2025-10-26–2025-11-23,4,7,7,54.0,4.5,0.6,11.0,28.6%,0.0,38,100.0,A+,High‑leverage first‑read usage (TPRR ~58.3%) with YPRR 4.50. Explosive share 28.6% and a beatable 38/100 pass defense make this a prime 1Q over look.,True
+P.Nacua,LA,WR/TE,CAR,2025-11-02–2025-11-23,4,9,9,94.0,3.6,0.3,6.9,22.2%,0.0,38,71.8,C−,Script‑sensitive profile — TPRR ~34.6% and YPRR 3.62. Matchup grade 38/100 suggests a fairly priced market.,True
+T.McMillan,CAR,WR/TE,LA,2025-11-02–2025-11-24,4,8,8,83.0,3.6,0.3,10.5,37.5%,0.0,89,71.1,C−,Script‑sensitive profile — TPRR ~34.8% and YPRR 3.61. Matchup grade 89/100 suggests a fairly priced market.,True
+A.Jones,MIN,WR/TE,SEA,2025-11-02–2025-11-23,4,6,6,13.0,0.7,0.3,2.3,0.0%,0.0,59,25.1,F,"Low early usage and efficiency (YPRR 0.68). Into a stiff 59/100 pass defense, overs are thin outcomes.",True
+J.Smith-Njigba,SEA,WR/TE,MIN,2025-11-02–2025-11-23,4,5,5,86.0,5.4,0.3,13.6,20.0%,0.0,44,86.2,B,Stable early involvement (TPRR ~31.2%) and YPRR 5.38. 20.0% explosives keep the over in play unless coverage tilts away.,True
+K.Shakir,BUF,WR/TE,PIT,2025-11-02–2025-11-20,4,5,5,17.0,0.8,0.2,-0.8,0.0%,0.0,47,20.0,F,"Low early usage and efficiency (YPRR 0.81). Into a stiff 47/100 pass defense, overs are thin outcomes.",True
+D.Metcalf,PIT,WR/TE,BUF,2025-11-02–2025-11-23,4,6,6,46.0,3.3,0.4,15.5,33.3%,0.0,66,80.8,B−,Stable early involvement (TPRR ~42.9%) and YPRR 3.29. 33.3% explosives keep the over in play unless coverage tilts away.,True
+T.Tucker,LV,WR/TE,LAC,2025-11-02–2025-11-23,4,5,5,-1.0,-0.0,0.2,11.8,0.0%,0.0,65,10.6,F,"Low early usage and efficiency (YPRR -0.04). Into a stiff 65/100 pass defense, overs are thin outcomes.",True
+O.Gadsden,LAC,WR/TE,LV,2025-10-23–2025-11-16,4,7,7,49.0,2.0,0.3,7.0,0.0%,0.0,70,33.9,F,"Low early usage and efficiency (YPRR 1.96). Into a stiff 70/100 pass defense, overs are thin outcomes.",True
+T.Franklin,DEN,WR/TE,WAS,2025-10-26–2025-11-16,4,5,5,35.0,1.9,0.3,24.4,20.0%,0.0,27,61.6,D,"Muted 1Q role (TPRR ~27.8%) and middling YPRR 1.94. Against a 27/100 defense, the over requires a perfect script.",True
+D.Samuel,WAS,WR/TE,DEN,2025-10-27–2025-11-16,4,4,4,16.0,0.9,0.2,0.8,0.0%,0.0,45,20.6,F,"Low early usage and efficiency (YPRR 0.89). Into a stiff 45/100 pass defense, overs are thin outcomes.",True
+T.Johnson,NYG,WR/TE,NE,2025-11-02–2025-11-23,4,5,5,38.0,2.2,0.3,7.8,20.0%,0.0,42,53.3,F,"Low early usage and efficiency (YPRR 2.24). Into a stiff 42/100 pass defense, overs are thin outcomes.",True
+T.Henderson,NE,WR/TE,NYG,2025-11-02–2025-11-23,4,4,4,34.0,3.8,0.4,2.2,25.0%,0.0,55,77.2,C+,Script‑sensitive profile — TPRR ~44.4% and YPRR 3.78. Matchup grade 55/100 suggests a fairly priced market.,True
 </script>
 
 <script>
 function setupCsvDownload(buttonId, scriptId, filename){
-  var btn = document.getElementById(buttonId);
-  var dataEl = document.getElementById(scriptId);
-  if(!btn || !dataEl) return;
-  btn.addEventListener('click', function(){
-    var csv = dataEl.textContent || '';
-    var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
+  var btn=document.getElementById(buttonId);
+  var dataEl=document.getElementById(scriptId);
+  if(!btn||!dataEl)return;
+  btn.addEventListener('click',function(){
+    var csv=dataEl.textContent||'';
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -594,43 +281,36 @@ function setupCsvDownload(buttonId, scriptId, filename){
 }
 
 function setupSearch(inputId, tableId){
-  var input = document.getElementById(inputId);
-  var table = document.getElementById(tableId);
-  if(!input || !table) return;
-  var rows = table.querySelectorAll('tbody tr');
-
-  function applyFilter(){
-    var q = (input.value || '').toLowerCase();
+  var input=document.getElementById(inputId);
+  var table=document.getElementById(tableId);
+  if(!input||!table)return;
+  var rows=table.querySelectorAll('tbody tr');
+  input.addEventListener('input',function(){
+    var q=input.value.toLowerCase();
     rows.forEach(function(row){
-      var text = row.textContent.toLowerCase();
-      if (text.indexOf(q) === -1) {
-        row.style.display = 'none';
-      } else {
-        row.style.display = ''; // let CSS decide: block on mobile, table-row on desktop
-      }
+      var text=row.textContent.toLowerCase();
+      row.style.display=text.indexOf(q)===-1?'none':'table-row';
     });
-  }
-
-  input.addEventListener('input', applyFilter);
+  });
 }
 
 function setupTabs(){
-  var tabs = document.querySelectorAll('.tab');
+  var tabs=document.querySelectorAll('.tab');
   tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      var target = tab.getAttribute('data-target');
-      tabs.forEach(function(t){ t.classList.remove('active'); });
+    tab.addEventListener('click',function(){
+      var target=tab.getAttribute('data-target');
+      tabs.forEach(function(t){t.classList.remove('active');});
       tab.classList.add('active');
       ['pass-card','rush-card','rec-card'].forEach(function(id){
-        var el = document.getElementById(id);
-        if(!el) return;
-        el.style.display = (id === target) ? 'block' : 'none';
+        var el=document.getElementById(id);
+        if(!el)return;
+        el.style.display=(id===target)?'block':'none';
       });
     });
   });
 }
 
-window.addEventListener('DOMContentLoaded', function(){
+window.addEventListener('DOMContentLoaded',function(){
   setupTabs();
   setupCsvDownload('btn-pass-csv','data-pass-csv','pass_1q.csv');
   setupCsvDownload('btn-rush-csv','data-rush-csv','rush_1q.csv');
